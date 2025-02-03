@@ -30,14 +30,16 @@ Include the zero.js script. It can be in the head or end of the body
 
 ```html
 <head>
-	<script src="/path/to/zero.js"></script>
+	<!-- Style sheet for ZSX loading indicator styles -->
+	<link rel="stylesheet" href="dist/zsx.css">
+	<script src="dist/zsx.js"></script>
 </head>
 ```
 
 ```html
 <body>
 	<!-- ... Content ... -->
-	<script src="/path/to/zero.js"></script>
+	<script src="dist/zsx.js"></script>
 </body>
 ```
 
@@ -51,7 +53,8 @@ Include the zero.js script. It can be in the head or end of the body
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="../src/zero.js"></script>
+	<link rel="stylesheet" href="dist/zsx.css">
+	<script src="dist/zsx.js"></script>
 	<title>ZSX.js - QuickStart</title>
 </head>
 <body>
