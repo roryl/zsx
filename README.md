@@ -131,7 +131,7 @@ ZSX actively monitors the content height of elements that are being swapped out 
 
 ##  Visual Loading Indicators
 
-Easily add loading indicators to all of your links and forms to improve responsiveness
+Easily add loading indicators to all of your links and buttons to improve responsiveness
 
 **Links**
 
@@ -167,7 +167,7 @@ See [`zx-sync-params`](#zx-sync-params-string-list)
 
 ## Automatic History Management
 
-All links and form GET redirects update the browser history and allow the user to navigate back to previous URLs.
+All links and form redirects (to GET) update the browser history and allow the user to navigate back to previous URLs.
 
 ***This feature is automatic and does not require any zx-attributes***
 
@@ -175,7 +175,7 @@ All links and form GET redirects update the browser history and allow the user t
 
 ## Action Confirmation Dialogs
 
-As a result of clicking links or buttons, ZSX can present a confirmation dialog before proceeding with the action. This allows you to quickly add a simple confirmation for risky actions. This allows for anything that is destructive and cannot be undone to be confirmed first.
+As a result of clicking links or buttons, ZSX can present a confirmation dialog before proceeding with the action. This allows you to quickly add a simple confirmation for risky actions.
 
 ![alt text](docs/img/zx-dialog-confirm.png)
 
@@ -197,21 +197,21 @@ See [`zx-link-mode`](#a-zx-link-mode-browser--app)
 
 ZSX works by adding attributes to your existing HTML markup.
 
-| attribute | Description | Tags | Values |
-| --- | --- | --- | --- |
-| [zx-swap](#zx-swap) | Swaps target selector content from the response of a link click or form post | a, form | #idSelector<br> .classSelector<br>tag-selector |
-| [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links | a | ParamName |
-| [zx-keep](#zx-keep) | Keeps specified content in the DOM after a parent element is swapped  | any HTML Element | true \| false |
-| [zx-link-mode](#zx-link-mode) | Whether to render the link as a browser (default) link or an application clickable element | a | browser (default) \| app |
-| [zx-dialog-confirm](#zx-dialog-confirm) | Confirmation question before proceeding wtih the click | a, form | any string |
-| [zx-scroll-to](#zx-scroll-to) | Where to sroll to after the content swap | a, form, button | true \| false <br> #idSelector <br> #.classSelector <br> other CSS selector |
-| [zx-loader](#zx-loader) | Specify that the link or button should have a loading indicator | a, button | true \| false
+| attribute | Description |
+| --- | --- |
+| [zx-swap](#zx-swap) | Swaps target selector content from the response of a link click or form post |
+| [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links |
+| [zx-keep](#zx-keep) | Keeps specified content in the DOM after a parent element is swapped  |
+| [zx-link-mode](#zx-link-mode) | Whether to render the link as a browser (default) link or an application clickable element |
+| [zx-dialog-confirm](#zx-dialog-confirm) | Confirmation question before proceeding wtih the click |
+| [zx-scroll-to](#zx-scroll-to) | Where to sroll to after the content swap |
+| [zx-loader](#zx-loader) | Specify that the link or button should have a loading indicator |
 
 ## zx-swap
 
 Swap out content in the current page with content from the response HTML. Specify the CSS selectors to target.
 
-Used on tags: `<a>`, `<form>`
+**Used on tags:** `<a>`, `<form>`
 
 **Valid Values:**
 
@@ -291,7 +291,7 @@ ZSX will update the URL history to the value of any GET redirect. POST redirects
 ## zx-sync-params
 ***string list***
 
-Synchronizes parameters from a `<a>` link click with other links on the page.
+Synchronizes parameters from an `<a>` link click with other links on the page.
 
 Used on tags: `<a>`
 
@@ -302,18 +302,18 @@ Used on tags: `<a>`
 
 ### Usage
 
-You use zx-sync-params when you need to keep URL state synchronized across all links on the page even when only a small subset of the page content is updated.
+You use zx-sync-params when you need to keep URL state synchronized across all links on the page, even when only a small subset of the page content is updated.
 
 This is necessary when URL contains important state that should persist across subsequent clicks, but the content from the zx-swap does not touch all of the links on the page.
 
 The logic performed is as follows:
 
-- **WHEN** a link with zx-sync-params is clicked
-- **FOR** each other link on the page
-- **FOR** each of the parameters in zx-sync-param
+- **WHEN** a link with `zx-sync-params` is clicked
+- **FOR** each link on the page
+- **FOR** each of the parameters in the clicked `zx-sync-params`
 - **IF** that parameter is in the other link's `href`
 - **THEN** pdate the parameter to the value of the parameter in the clicked link.
-- **UNLESS** the other link itself contains a zx-sync-param with the same parameter name
+- **UNLESS** the other link itself contains a `zx-sync-params` with the same parameter name
 
 
 `zx-sync-params` can take a single parameter or multiple parameters.
@@ -353,7 +353,7 @@ For example, consider an element that needs to be visible or hidden. One link sh
 </div>
 ```
 
-Because both the show and hide links have a zx-sync-params, that means the other is ignored when updated. Therefore only the 'Other Link' gets updated to whatever show/hide link was clicked last.
+Because both the show and hide links have a zx-sync-params, that means the inverse link is ignored when updated. Therefore only the 'Other Link' gets updated to whatever show/hide link was clicked last.
 
 ↑ [top](#zsxjs) | [features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
