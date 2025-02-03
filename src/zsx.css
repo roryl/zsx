@@ -55,8 +55,7 @@ a .zx-loader-progress-bar {
     left: 0;
     height: 100%; /* Height of the progress indicator */
     width: 100%; /* Full width of the button */
-    background-color: rgba(255, 255, 255, 0.3);
-	opacity: .3;
+    background-color: rgba(255, 255, 255, 0.8);
     animation: simulateProgress 2.5s linear forwards, pulseOpacity 1s infinite alternate; /* Animation setup */
 }
 
