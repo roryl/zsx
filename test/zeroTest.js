@@ -236,8 +236,11 @@ suite('ZsxJs', function() {
 			</div>
 		`;
 
+		var parser = new DOMParser();
+		var responseDom = parser.parseFromString(newContent, 'text/html');
+
 		// @ts-ignore
-		ZsxJstest._parseResponseAndSwapSelector(document, newContent, '#outerContainer');
+		ZsxJstest._parseResponseAndSwapSelector(document, responseDom, '#outerContainer');
 
 		// @ts-ignore
 		var testContainer = document.getElementById('testContainer');

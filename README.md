@@ -2,7 +2,7 @@
 
 Build a ***Zero-Script UX***
 
-ZSX is a progressive enhancement library for server-rendered web applications. ZSX uses only semantic HTML, CSS, URLs, links, forms, and buttons to improve the user experience without any additional developer javascript.
+ZSX is a dependency free progressive enhancement library for server-rendered web applications. ZSX uses only semantic HTML, CSS, URLs, links, forms, and buttons to improve the user experience without any additional developer javascript.
 
 ```html
 <!-- Swap out the element from the response of a link click into the page -->
@@ -518,7 +518,7 @@ Sometimes you want the scroll location to be just above the target element. You 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 ## zx-loader
-***true | false***
+***true | false | cursor-wait | cursor-progress***
 
 Adds a visual progress indicator to buttons and links for requests that take time to complete.
 
@@ -527,19 +527,61 @@ Adds a visual progress indicator to buttons and links for requests that take tim
 **Valid Values:**
 - **true**: Add a loading indicator when clicked
 - **false**: Do not add a loading indicator
+- **cursor-wait**: Change the cursor to the browsers default wait cursor
+- **cursor-progress**: Change the cursor to the browsers default progress cursor
 
 ### Usage
+Use `zx-loader` for any action which is not or nearly not immediate. There are different types of loading indicators to suit your design requirements.
 
-Use `zx-loader` for any action which is not or nearly not immediate.
+- [`<a>` loading indicator](#a-loading-indicator)
+- [`<a>` link with 'wait' cursor](#a-link-with-wait-cursor)
+- [`<a>` link with 'progress' cursor](#a-link-with-progress-cursor)
+- [`<button>` loading indicator](#button-loading-indicator)
 
 #### `<a>` loading indicator
 
-Animates the background of the text with a progress indicator
+Animates the background of the text with a progress indicator. Useful for App-Style links or links that look like buttons.
 
-![Link with loading dots](docs/img/link_with_loader.png)
+![Link background loader](docs/img/link_with_loader.png)
 
 ```html
 <a href="/path" zx-swap="#target" zx-loader="true">Link with Loader</a>
+```
+
+#### `<a>` link with 'wait' cursor
+
+Uses the browsers default wait cursor style. Useful for regular links where you want to disuade clicking the element again.
+
+```html
+<a href="/path" zx-swap="#target" zx-loader="cursor-wait">Link with Wait Cursor</a>
+```
+
+<span style="cursor:wait;">Hover to Show Cursor</span>
+
+You can override the `.zx-loading-cursor-wait` class if you need to customize the icon
+
+```css
+.zx-loading-cursor-wait {
+	cursor: wait !important;;
+}
+```
+
+#### `<a>` link with 'progress' cursor
+
+Uses the browsers default progress cursor style. Useful for regular links where it's okay for the user to click again
+
+```html
+<a href="/path" zx-swap="#target" zx-loader="cursor-wait">Link with Progress Cursor</a>
+```
+
+<span style="cursor:progress;">Hover to Show Cursor</span>
+
+You can override the `.zx-loading-cursor-progress` class if you need to customize the icon
+
+```css
+.zx-loading-cursor-wait {
+	cursor: wait !important;;
+}
 ```
 
 #### `<button>` loading indicator
@@ -583,11 +625,11 @@ See Cookbook [Restoring Events and Features After Swap](#restoring-events-and-fe
 
 # ZSX Design Goals
 
-ZSX has an opinionated philosophy in regards to web application architecture that dictate it's featureset. Understanding where we're coming from will help you determine if ZSX is right for your development style.
+ZSX has an opinionated philosophy in regards to web application architecture that dictate it's featureset. Understanding these opinions will help you determine if ZSX is right for your development style.
 
 ZSX is designed to enhance server rendered applications. It only uses semantic HTML and follows browser semantics. It improves the user experience of server rendered applications without breaking user’s expectations of browser behavior.
 
-These are some guiding principles when we built [ChartSQL Studio](https://docs.chartsql.com) and our other applications.
+We built [ChartSQL Studio](https://docs.chartsql.com) with ZSX and followed these guiding principles:
 
 
 - [URLs and HTTP is the Right Architecture](#urls-and-http-is-the-right-architecture)
@@ -612,22 +654,22 @@ Web applications should be addressible by URLs (links) and state changes should 
 
 Applications should be decomposed into pages (/entity1, /entity2) representing different resources following a generally RESTful style.
 
-HTML, links and forms are the natural way to work with this architecture.
+It follows that HTML, links and forms are the natural way to work with this architecture.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Links, Forms and Buttons Are All You (Mostly) Need
 
-Modern HTML contains everything necessary for a user to interract with 99% of web applications in an accessible and semantic way. It is not necessary to reinvent form controls or client side routing mechanisms to implement virtually any DOM level user experience. Many developers are not even aware of modern features of HTML.
+Modern HTML contains everything necessary for a user to interract with 99% of web applications in an accessible and semantic way. It is not necessary to reinvent form controls or client side routing mechanisms. Virtually any DOM driven user experience can be maniuplated with just links, forms and buttons. Many developers are not even aware of modern features of HTML.
 
-More advanced visual fidelity has canvas and WebGL functions that applications can include in their overall application. But when you are working with the DOM, rely on links, forms and buttons unless it can't be achieved any other way.
+More advanced visual fidelity can be achieved with minor javascript, canvas and WebGL functionality. But when you are working with the DOM, rely on links, forms and buttons unless it can't be achieved any other way.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Web Components Are Not Necessary
-A lot of front end development seeks to "componetize" HTML. "Web Components" in the general sense is not a new technology, it goes back to the earliest web frameworks like JSP. However, unless you are creating a "component library" for others to use, we do not believe web components aid in development of a single application.
+A lot of front end development seeks to "componetize" HTML. "web components" in the general sense is not a new technology, it goes back to the earliest web frameworks like JSP. However, unless you are creating a "component library" for others to use, we do not believe web components aid in development of applications.
 
-We believe that it is easiest and most maintainable to build UIs in basic full HTML pages.
+We believe that it is easiest and most maintainable to build web UIs in basic HTML pages.
 
 ZSX exists to enhance that experience while staying true to the nature of HTML and HTTP.
 
@@ -637,7 +679,7 @@ ZSX exists to enhance that experience while staying true to the nature of HTML a
 
 ZSX takes an minimalist approach to JavaScript. While some JS is necessary, we think JS heavy applications are not good UX.
 
-We believe the best UX is based on fundamental HTML/HTTP, links and forms, and that “JS first frontends” cause developers to create overly complex applications that are hard to maintain.
+We believe the best UX is based on fundamental HTML/HTTP, links and forms, and that “JS first frontends” are overly complex applications that are hard to maintain.
 
 In a ZSX application, you should be able to look at the rendered HTML and understand exactly the interaction with the backend just by following the links and forms.
 
@@ -647,26 +689,27 @@ In a ZSX application, you should be able to look at the rendered HTML and unders
 
 In a ZSX application the server by default always fully renders full pages. ZSX provides features to hot swap elements on the page and avoid a full browser page reload.
 
-Event though the server renders the full page, avoiding a full page reload improves performance of the browser. Browser performance is improved because it doesn't need to reflow the entire document. This performance improvement is perceived by the user as more responsive.
+Avoiding a full page reload improves performance of the browser. Browser performance is improved because it doesn't need to reflow the entire document. This performance improvement is perceived by the user as more responsive.
 
-Full server renders might seem wasteful, but it greatly improves the maintainability of applications:
+Full server renders might seem costly, but it greatly improves the maintainability of applications:
 
 - Most pages in an application are fast enough that it doesn't matter.
-- Forces developers to think through the first page load experience up front. Dissuades client side hydration which we consider an anti-pattern.
+- Forces developers to think through the first page load experience up front.
+- Dissuades client side hydration which we consider an anti-pattern.
 - "Premature optimization is the root of all evil" - You don't need to spend time optimizing the performance of pages that are seldom used.
-- Caching of pages can be done server-size in a robust maintainable manner
+- Caching of pages can be done server-size in a more robust manner
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Explicit Link and Form Handling
 
-As compared to some other libraries of this type, ZSX does not automatically decorate all links or forms for swapping body content by default, for these reasons:
+As compared to some similar libraries, ZSX does not automatically override all links or forms, because:
 
 - The application will be most responsive when you swap the smallest amount of content necessary
-- You should be able to inspect the HTML and understand what the link/form behavior is
-- You should think through which content exactly needs to be updated from every click or form post, rather than assume everything
+- You should be able to inspect the HTML and understand what each link/form behavior is without having to know hidden information
+- You should think through which content exactly needs to be updated from every click or form post.
 
-Therefore when using ZSX, you explicitly decide for every link which content needs to be updated and which zx-* features to apply.
+Therefore when using ZSX, you explicitly decide for every link/form which content needs to be updated, and which zx-* features to apply.
 
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
@@ -675,7 +718,8 @@ Therefore when using ZSX, you explicitly decide for every link which content nee
 
 A litmus test for web applications with proper UX is “can you hard refresh.” Many applications exhibit poor user experience on hard refresh:
 
-- It takes a long time for the page to load in all of the content
+- It takes a long time for the page to load
+- Time to interaction is delayed as client side features are "hydrated"
 - There may be a lot of flashing and layout thrashing as elements are loaded in
 - States that were clicked through to are lost, and the user is back at some “root” page flow
 
@@ -695,12 +739,12 @@ If your application fundamentally works with JavaScript turned off, then ZSX is 
 
 If your application is fully SPA, then ZSX is not a good fit.
 
-ZSX is a small library and will work well with any other JS libraries.
+ZSX is a small library and will work well with other JS libraries.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Future Development
-ZSX will only add enhancement features that we find solve common tasks, without breaking fundemental browser architecture. HTML is continually evolving with new features that make browser apps more responsive and user friendly. We are betting on HTML/CSS/HTTP and Server Side Rendering as the engine of applications.
+ZSX will only add enhancement features that we find solve common tasks in our applications, without breaking fundemental browser architecture. HTML is continually evolving with new features that make browser apps more responsive and user friendly. We are betting on HTML/CSS/HTTP and Server Side Rendering as the engine of applications.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
@@ -712,17 +756,19 @@ ZSX is similar to HTMX and Unpoly.js in its fundamental philosophy of server ren
 
 HTMX seeks to add new non-standard “hypermedia” features to HTML. Essentially, it allows turning any element into a link, button, GET/POST/PATCH. This is not semantic and means that applications built in HTMX cannot work with JavaScript turned off.
 
+We explicitly do not like that any element on the page can be an interaction point, instead [Links, Forms, and Buttons Are All You (mostly) Need](#links-forms-and-buttons-are-all-you-mostly-need).
+
 ### Unpoly.js
 
-Unpoly.js is probably the closest philosophically to ZSX. However I consider it’s feature set needlessly complex. I believe there are only a few necessary conventions that we need. Unpoly drifts away from semantic HTML with layers and other non-browser features. In comparison, ZSX only enhances fundamental browser behavior.
+Unpoly.js is probably the closest philosophically to ZSX. However I consider it’s feature set more complex than I desire. I believe there are only a few necessary conventions that we need. Unpoly drifts away from semantic HTML with features like layers. In comparison, ZSX only enhances fundamental browser behavior.
 
-Unpoly also has a lot of configurations for targeting different elements, parents, children, appending, prepending and automatically choosing ambiguous cases. I consider this needless complexity.
+Unpoly also has a lot of configurations for targeting different elements, parents, children, appending, prepending and automatically choosing ambiguous cases. I consider these uncessary and an anti-pattern.
 
 Instead, with ZSX, you control your HTML, the IDs, and classes you wish to target. This makes it easier to maintain your HTML and understand your content updates. You can always look at the source HTML and know exactly what will happen.
 
 ### Turbo / Hotwire
 
-Turbo is also another strategy to “dramatically reduce the amount of custom JavaScript” but it has different goals. It provides features like ‘Frames’ and ‘Streams’ to add additional architectural options for building web applications that are beyond what I believe are necessary.
+Turbo is also another strategy to “dramatically reduce the amount of custom JavaScript” but it has different goals. It provides features like ‘Frames’ and ‘Streams’ to add additional architectural options. I believe that Turbo goes beyond what I believe satisfies that [URLs and HTTP is the Right Architecture](#urls-and-http-is-the-right-architecture)
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 

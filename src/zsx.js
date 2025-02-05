@@ -68,7 +68,8 @@ _ZsxJs.ZsxJs = class ZsxJs {
 						event.state.uri,
 						event.state.zeroSyncParams,
 						event.state.triggerAnchorElement,
-						false
+						false,
+						true
 					);
 
 				}).catch(error => {
@@ -309,8 +310,10 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	 */
 	_parseResponseAndSwapSelectors(dom, response, selectorsToSwap){
 		var selectorArray = selectorsToSwap.split(',');
+		var parser = new DOMParser();
+		var responseDom = parser.parseFromString(response, 'text/html');
 		selectorArray.forEach((selector) => {
-			this._parseResponseAndSwapSelector(dom, response, selector);
+			this._parseResponseAndSwapSelector(dom, responseDom, selector);
 		});
 	}
 
@@ -318,12 +321,12 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	 * Given a document object, a response string and a selector, swaps the matching elements
 	 * in the document with the elements in the response
 	 * @param {DOMQueryable} dom
-	 * @param {string} response
+	 * @param {Document} responseDom
 	 * @param {string} selector
 	 */
 	_parseResponseAndSwapSelector(
 		dom,
-		response,
+		responseDom,
 		selector,
 	){
 
@@ -373,10 +376,6 @@ _ZsxJs.ZsxJs = class ZsxJs {
 		originalSelectedElements.forEach((originalTargetElement) => {
 
 			// this.log('_parseResponseAndSwapSelectors: replacing target element');
-
-			var parser = new DOMParser();
-			var responseDom = parser.parseFromString(response, 'text/html');
-
 			if(useId){
 				var responseSelector = '#' + originalTargetElement.id;
 			} else {
@@ -469,7 +468,13 @@ _ZsxJs.ZsxJs = class ZsxJs {
 				newScript.innerHTML = scripts[i].innerHTML;
 			}
 
-			document.body.appendChild(newScript);
+			// Append the new script to the document head
+			// which executes the script
+			var newChild = document.head.appendChild(newScript);
+			// Now remove the old script from the head to prevent memory leaks
+			// as the script has already been executed
+			newChild.remove();
+
 		}
 
 		keepElements.forEach((keepElement) => {
@@ -546,6 +551,17 @@ _ZsxJs.ZsxJs = class ZsxJs {
 					element.innerHTML = loadingSpan + element.innerHTML;
 
 				}
+			} else {
+
+				var loaderIsCursor = loader === 'cursor-wait' || loader === 'cursor-progress';
+
+				if(loaderIsCursor){
+
+					// We add the .zx-loading-cursor-wait class to the body and element to indicate that we are loading
+					element.classList.add(`zx-loading-${loader}`);
+					document.body.classList.add(`zx-loading-${loader}`);
+				}
+
 			}
 		}
 
@@ -571,6 +587,16 @@ _ZsxJs.ZsxJs = class ZsxJs {
 					// Disable the button so that it can't be clicked again
 					element.setAttribute('disabled', 'true');
 
+				}
+			} else {
+
+				var loaderIsCursor = loader === 'cursor-wait' || loader === 'cursor-progress';
+
+				if(loaderIsCursor){
+
+					// We add the .zx-loading-cursor-wait class to the body and element to indicate that we are loading
+					element.classList.add(`zx-loading-${loader}`);
+					document.body.classList.add(`zx-loading-${loader}`);
 				}
 			}
 		}
@@ -619,6 +645,15 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			loader.classList.remove('zx-loading');
 			loader.classList.add('zx-loader');
 		}
+
+		// If the element contains any objects with class .zx-loading-cursor-wait then we
+		// are going to remove the class .zx-loading-cursor-wait
+		element.classList.remove('zx-loading-cursor-wait');
+		document.body.classList.remove('zx-loading-cursor-wait');
+
+		element.classList.remove('zx-loading-cursor-progress');
+		document.body.classList.remove('zx-loading-cursor-progress');
+
 	}
 
 	/**
@@ -818,10 +853,20 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	 * @param {string} swapSelectors
 	 * @param {string} uri
 	 * @param {HTMLAnchorElement} triggerAnchorElement,
-	 * @param {ZeroSyncParams} zeroSyncParams
+	 * @param {ZeroSyncParams} zeroSyncParams	 *
 	 * @param {boolean} shouldPushHistory
+	 * @param {boolean} isRestoringFromHistory
 	 */
-	_handleLinkResponse(response, dom, swapSelectors, uri, triggerAnchorElement, zeroSyncParams, shouldPushHistory=true){
+	_handleLinkResponse(
+		response,
+		dom,
+		swapSelectors,
+		uri,
+		triggerAnchorElement,
+		zeroSyncParams,
+		shouldPushHistory=true,
+		isRestoringFromHistory=false
+	){
 
 		response.text().then(content => {
 
@@ -830,12 +875,17 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			}
 
 			this._parseResponseAndSwapSelectors(dom, content, swapSelectors);
-			this._parseAndExecuteElementScrollTo(
-				window.location.href,
-				uri,
-				triggerAnchorElement,
-				null
-			);
+
+			// When we are restoring from history we do not want to trigger the scroll
+			// because the scroll is already handled by the browser when the history is popped
+			if(!isRestoringFromHistory){
+				this._parseAndExecuteElementScrollTo(
+					window.location.href,
+					uri,
+					triggerAnchorElement,
+					null
+				);
+			}
 
 			//Add the uri to the history
 			if(shouldPushHistory){
@@ -873,7 +923,7 @@ _ZsxJs.ZsxJs = class ZsxJs {
 
 			if(linkMode === 'app'){
 				triggerAnchorElement.setAttribute('data-href', triggerAnchorElement.href);
-				triggerAnchorElement.style.cursor = 'pointer';
+				triggerAnchorElement.classList.add('zx-link-app');
 				triggerAnchorElement.removeAttribute('href');
 			}
 		}

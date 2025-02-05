@@ -24,6 +24,18 @@
     }
 }
 
+.zx-link-app {
+	cursor: pointer;
+}
+
+.zx-loading-cursor-wait {
+	cursor: wait !important;
+}
+
+.zx-loading-cursor-progress {
+	cursor: progress !important;
+}
+
 .zx-spinner-button {
     display: inline-flex; /* Use flexbox to align items */
     align-items: center; /* Vertically center items */
