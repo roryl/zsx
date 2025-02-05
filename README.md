@@ -868,7 +868,7 @@ This means that you cannot wait to start animations after a request has finished
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
-## UI Performace Optimization
+## UI Performance Optimization
 
 Most of the zsx processing is waiting on one of three operations: network requests, DOM swaps, and inline javascript. Decreasing the amount of time for these operations will have the biggest impact on application responsiveness.
 
