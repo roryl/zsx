@@ -154,15 +154,28 @@ _ZsxJs.ZsxJs = class ZsxJs {
 		var linkParamString = link.split('?')[1];
 		var linkParams = new URLSearchParams(linkParamString);
 
-		var aLinks = dom.querySelectorAll('a');
+		var aLinks = document.querySelectorAll('a');
 
 		// For each alink, we need to loop through the trackUrlParams and update the values
 		// to match those provided in the linkParams
 		aLinks.forEach((aLink) => {
 
+			var isAppLink = false;
 			// this.log("link" + aLink);
-			var href = aLink.href;
+			// If the link contains zx-link-mode="app" then we are a app link and
+			// we need to get the href from the data-href attribute instead
+			if(aLink.hasAttribute('zx-link-mode')){
+				var linkMode = aLink.getAttribute('zx-link-mode');
+				if(linkMode === 'app'){
+					var isAppLink = true;
+				}
+			}
 
+			if(isAppLink){
+				var href = aLink.getAttribute('data-href');
+			} else {
+				var href = aLink.getAttribute('href');
+			}
 
 			// If the href is null, then we are going to skip this link
 			if(href === null){
@@ -210,10 +223,17 @@ _ZsxJs.ZsxJs = class ZsxJs {
 				anyLinksTouched = true;
 			}
 
-			// this.log(urlParams.toString());
 			if(anyLinksTouched){
+
+				// this.log(urlParams.toString());
+
 				var newHref = hrefBasePath + '?' + urlParams.toString();
-				aLink.setAttribute('href', newHref);
+
+				if(isAppLink){
+					aLink.setAttribute('data-href', newHref);
+				} else {
+					aLink.setAttribute('href', newHref);
+				}
 			}
 
 		});

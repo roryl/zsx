@@ -1,8 +1,10 @@
 # ZSX.js
 
-Build a ***Zero-Script UX***
+Build ***Zero JavaScript User Experiences***
 
-ZSX is a dependency free progressive enhancement library for server-rendered web applications. ZSX uses only semantic HTML, CSS, URLs, links, forms, and buttons to improve the user experience without any additional developer javascript.
+ZSX is a dependency free progressive enhancement library for server-rendered web applications. ZSX uses only semantic HTML, CSS, URLs, links, forms, and buttons to improve the user experience.
+
+
 
 ```html
 <!-- Swap out the element from the response of a link click into the page -->
@@ -11,7 +13,7 @@ ZSX is a dependency free progressive enhancement library for server-rendered web
 
 ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), [Turbo](https://turbo.hotwired.dev/) and [Fixi.js](https://github.com/bigskysoftware/fixi), but with an opinionated featureset.
 
-Our building of [ChartSQL Studio Editor](https://docs.chartsql.com) was the source and inspiration for ZSX.
+[ChartSQL Studio Editor](https://docs.chartsql.com) was inspiration and first application built with ZSX.
 
 
 ## Table of Contents
@@ -81,8 +83,8 @@ Include the zsx.js script. It can be in the head or end of the body
 ZSX upgrades links, forms and buttons to make applications more responsive and solve common UX patterns.
 
 **Page Fragment Updates**:
- - [Swap Client Side Content without Refresh](#swap-client-side-content-without-refresh) — [`zx-swap`](#zx-swap)
- - [Preserve Client-Side State During Swaps](#preserve-client-side-state-during-swaps) — [`zx-keep`](#zx-keep)
+ - [Swap Client Side Content without Reload](#swap-client-side-content-without-reload) — [`zx-swap`](#zx-swap)
+ - [Preserve Client-Side Content During Swaps](#preserve-client-side-content-during-swaps) — [`zx-keep`](#zx-keep)
 
 **Enhanced Visual Fidelity**:
  - [Automatic Page Jump Supression](#automatic-page-jump-supression)
@@ -99,17 +101,17 @@ ZSX upgrades links, forms and buttons to make applications more responsive and s
 
 ↑ [top](#zsxjs) | *next:* [Features](#features)
 
-## Swap Client Side Content without Refresh
+## Swap Client Side Content without Reload
 
 Dynamically update parts of your page by swapping elements based on their ID, class, or tag in response to link clicks or form submissions.
 
-This technique allows you to update portions of your content without a full page reload, enhancing performance and user experience.
+The content swap feature allows you to update portions of your page without a full page reload, enhancing performance and user experience.
 
-See [`zx-swap`](#zx-swap-string-list)
+See [`zx-swap`](#zx-swap)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
-## Preserve Client-Side State During Swaps
+## Preserve Client-Side Content During Swaps
 
 When swapping content, preserve dynamic client side media, canvas or content that should not be changed. You can mark which content needs to be maintained and it will be restored across swaps
 
@@ -121,9 +123,9 @@ See [`zx-keep`](#zx-keep-true--false)
 
 ZSX will minimize disruptive page jumps from removed content.
 
-Typically in an application, when elements are removed from the DOM, the page may abruptly jump upward if the combined height of the remaining content and the viewport is less than the current scroll position.
+When elements are removed from the DOM, the page may abruptly jump upward if the combined height of the remaining content and the viewport is less than the current scroll position.
 
-ZSX actively monitors the content height of elements that are being swapped out and dynamically inserts just enough space at the end of the document.
+ZSX manages the content height of elements that are being swapped to ensure that the page does not jump.
 
 ***This feature is automatic and does not require any zx-attributes***
 
@@ -151,7 +153,7 @@ See [`zx-loader`](#zx-loader)
 
 ##  Scroll Elements Into View
 
-Automatically scroll newly swapped elements into the viewport. Define custom scroll targets to ensure important content is brought into focus.
+Scroll newly swapped elements into the viewport. You can define custom scroll targets to ensure important content is brought into focus.
 
 See [`zx-scroll-to`](#zx-scroll-to)
 
@@ -159,15 +161,15 @@ See [`zx-scroll-to`](#zx-scroll-to)
 
 ## Synchronize URL Parameters Across Links
 
-On link navigation, you can synchronize all links on the page to match particular URL variables of the clicked link. This allows you to swap small portions of the page, but ensure all other links on the page match the correct parameters.
+On link navigation, you can synchronize all links on the page to match particular URL variables of the clicked link. URL syncrhonization allows you to swap small portions of the page, but ensure all other links on the page match the correct parameters.
 
-See [`zx-sync-params`](#zx-sync-params-string-list)
+See [`zx-sync-params`](#zx-sync-params)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
 ## Automatic History Management
 
-All links and form redirects (to GET) update the browser history and allow the user to navigate back to previous URLs.
+All links and forms (that redirect to GET) update the browser history and allow the user to navigate back to previous URLs.
 
 ***This feature is automatic and does not require any zx-attributes***
 
@@ -175,7 +177,7 @@ All links and form redirects (to GET) update the browser history and allow the u
 
 ## Action Confirmation Dialogs
 
-As a result of clicking links or buttons, ZSX can present a confirmation dialog before proceeding with the action. This allows you to quickly add a simple confirmation for risky actions.
+Present a confirmation dialog before proceeding with destructive actions.
 
 ![alt text](docs/img/zx-dialog-confirm.png)
 
@@ -187,11 +189,11 @@ See [`zx-dialog-confirm`](#zx-dialog-confirm)
 
 Convert traditional `<a>` tags into app-like buttons or interactive controls that blend seamlessly into your application's interface. App Links prevent the display of URL tooltips and the standard context menu, providing a cleaner, more cohesive user experience for full screen apps.
 
-See [`zx-link-mode`](#a-zx-link-mode-browser--app)
-
-<br/>
+See [`zx-link-mode`](#zx-link-mode)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
+
+<br>
 
 # HTML API
 
@@ -199,13 +201,258 @@ ZSX works by adding attributes to your existing HTML markup.
 
 | attribute | Description |
 | --- | --- |
-| [zx-swap](#zx-swap) | Swaps target selector content from the response of a link click or form post |
-| [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links |
+| [zx-dialog-confirm](#zx-dialog-confirm) | Confirmation question before proceeding wtih the click |
 | [zx-keep](#zx-keep) | Keeps specified content in the DOM after a parent element is swapped  |
 | [zx-link-mode](#zx-link-mode) | Whether to render the link as a browser (default) link or an application clickable element |
-| [zx-dialog-confirm](#zx-dialog-confirm) | Confirmation question before proceeding wtih the click |
-| [zx-scroll-to](#zx-scroll-to) | Where to sroll to after the content swap |
 | [zx-loader](#zx-loader) | Specify that the link or button should have a loading indicator |
+| [zx-scroll-to](#zx-scroll-to) | Where to sroll to after the content swap |
+| [zx-swap](#zx-swap) | Swaps target selector content from the response of a link click or form post |
+| [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links |
+
+## zx-dialog-confirm
+***string***
+
+Generates a confirmation dialog modal to confirm the action before proceeding with the link or button click.
+
+**Used on Tags**: `<a>`, `<button>`
+
+**Valid Values:** Any text string
+
+There are additional attributes you can add to control the content:
+
+- **zx-dialog-confirm-title**: Sets a title for the dialog
+- **zx-dialog-confirm-yes**: The text of the yes/ok button
+- **zx-dialog-confirm-no**: The text of the no/cancel button
+
+### Usage:
+You should ask user for confirmation of actions that are sensitive and cannot be easily undone, or that has side effects. For example, deleting a record which cannot be recovered. Typically this will be used on form buttons (because links/GET should not make permanent changes)
+
+```html
+<button zx-dialog-confirm="Continue?">Hello</button>
+<a href="?hello=true" zx-dialog-confirm="Continue?">Hello</a>
+```
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
+
+## zx-keep
+***true | false***
+
+Keeps an an element and its descendants unchanged when a parent is swapped out. Useful for maintaining page level content like video, audio forms or other interactive content that should not be swapped.
+
+**Used on tags:** any html element
+
+**Values Values:**
+
+- true: Keep the element when swapping out the parent
+- false: Do not keep the element when swapping out the parent
+
+
+### Usage
+
+```html
+<a href="/" zx-swap="#container">Update</a>
+<div id="container">
+	Updated Content
+	<div id="someContent" zx-keep="true">
+		Kept Conent
+	</div>
+</div>
+```
+
+<aside>
+<img src="https://www.notion.so/icons/error_green.svg" alt="https://www.notion.so/icons/error_green.svg" width="40px" />
+
+Element with zx-keep requires that an Id be set
+
+</aside>
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
+
+
+
+## zx-link-mode
+***browser | app***
+
+Specifies whether a link should behave like a regular browser link, or adopt a more application-like interaction.
+
+**Used on Tags:** `<a>`
+
+**Valid Values:**
+
+- `"browser"`: (default) Maintains standard browser link behavior, including displaying URL tooltips and offering content menus. This is the default.
+- `"app"`: Suppresses the URL tooltip and modifies the link's behavior to mimic a form button or application-like interaction.
+
+### Example Usage:
+
+```html
+<a href="https://example.com/page" zx-link-mode="browser">Standard Link</a>
+<a href="https://example.com/action" zx-link-mode="app">App-like Link</a>
+```
+
+### Use Cases
+
+Browsers provide some default features for links like tooltips, right click menu, and clicked and unclicked states. For some application where we want a desktop like app experience, disabling these default browser behaviors is desired.
+
+When `zx-link-mode="app"` the link is just clickable text. You handle all additional styling for the link.
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
+
+
+## zx-loader
+***true | false | cursor-wait | cursor-progress***
+
+Adds a visual progress indicator to buttons and links for requests that take time to complete.
+
+**Used on Tags:** `a`, `button`
+
+**Valid Values:**
+- **true**: Add a loading indicator when clicked
+- **false**: Do not add a loading indicator
+- **cursor-wait**: Change the cursor to the browsers default wait cursor
+- **cursor-progress**: Change the cursor to the browsers default progress cursor
+
+### Usage
+Use `zx-loader` for any action which is not or nearly not immediate. There are different types of loading indicators to suit your design requirements.
+
+- [`<a>` loading indicator](#a-loading-indicator)
+- [`<a>` link with 'wait' cursor](#a-link-with-wait-cursor)
+- [`<a>` link with 'progress' cursor](#a-link-with-progress-cursor)
+- [`<button>` loading indicator](#button-loading-indicator)
+
+#### `<a>` loading indicator
+
+Animates the background of the text with a progress indicator. Useful for App-Style links or links that look like buttons.
+
+![Link background loader](docs/img/link_with_loader.png)
+
+```html
+<a href="/path" zx-swap="#target" zx-loader="true">Link with Loader</a>
+```
+
+#### `<a>` link with 'wait' cursor
+
+Uses the browsers default wait cursor style. Useful for regular links where you want to disuade clicking the element again.
+
+```html
+<a href="/path" zx-swap="#target" zx-loader="cursor-wait">Link with Wait Cursor</a>
+```
+
+<span style="cursor:wait;">Hover to Show Cursor</span>
+
+You can override the `.zx-loading-cursor-wait` class if you need to customize the icon
+
+```css
+.zx-loading-cursor-wait {
+	cursor: wait !important;;
+}
+```
+
+#### `<a>` link with 'progress' cursor
+
+Uses the browsers default progress cursor style. Useful for regular links where it's okay for the user to click again
+
+```html
+<a href="/path" zx-swap="#target" zx-loader="cursor-wait">Link with Progress Cursor</a>
+```
+
+<span style="cursor:progress;">Hover to Show Cursor</span>
+
+You can override the `.zx-loading-cursor-progress` class if you need to customize the icon
+
+```css
+.zx-loading-cursor-wait {
+	cursor: wait !important;;
+}
+```
+
+#### `<button>` loading indicator
+
+Animates the button with a simulated progress indicator and disables the button until the request completes
+
+![Button Loading](docs/img/button_with_loader.png)
+
+```html
+<button type="submit" zx-loader="true">
+	Loading Indicator
+</button>
+```
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
+
+
+## zx-scroll-to
+***true | false | top | if-needed | CSS selector***
+
+Tells ZSX to scroll to a particular element after completing a zx-swap. This can improve the user experience when the swapped elements may be out of view or we want to focus the new elements.
+
+**Used on Tags:** `<a>`, `<button>`
+
+**Valid Values:**
+
+- **`true | false`**: When true, scroll to the first zx-swap selector element. When false, this disables zx-scroll-to and also default browser hash fragment scrolling.
+- **`#idSelector`**: Scroll to the provided Id, regardless of the zx-swap selectors
+- `.classSelector` : Any valid CSS selector. The first item returned will be the target of the scroll
+- `"top"` : Scroll to the top of the page
+- `"if-needed"` : Scroll to the element if it is out of view otherwise do not scroll
+
+### Usage
+
+Browsers by default include scrolling to a URL hash fragement identifier. You can use zx-scroll-to for more complex scrolling scenarios like classes, 'top' of page, or 'if-needed'
+
+**Default Browser hash(#) identifier**
+
+When zx-swap is applied, if there is an id hash in the URL, it will scroll to that ID. This is the browser's semantic way to scroll to.
+
+```html
+<a href="/page#elementId" zx-swap="#elementId">Link</a>
+```
+
+**Scrolling to the Swap Target**
+
+When `zx-scroll-to="true"` it will scroll to the location of the `zx-swap`
+
+```html
+<a href="?hello=true" zx-swap="#targetContainer" zx-scroll-to="true">Hello</a>
+```
+
+#### Scrolling to the newest created element
+
+Sometimes as a result of adding a new item to the page, we will want to scroll to that item, except we do not know a unique ID for it because it does not exist yet. You can use a complex class selector to scroll to the last (or first) item.
+
+```html
+<button type="submit" zx-scroll-to=":nth-last-child(1 of .classList)">
+```
+
+#### Disable Page Change Scrolling
+
+By default, ZSX handles links to different pages (base paths) by scrolling to the top of the page. This matches default browser behavior and user expectations when switching pages.
+
+You can disable this by setting zx-scoll-to="false" on your links that you want to maintain the current scroll position between pages.
+
+```html
+<a href="/page1" zx-swap="#targetContainer" zx-scroll-to="false">Hello</a>
+<a href="/page2" zx-swap="#targetContainer" zx-scroll-to="false">Hello</a>
+```
+
+The reason for this behavior is that typically, in a multi-page appication, each page route is significantly different content. The usual experience is to start that page at the top of the content.
+
+#### Smooth Scrolling
+
+ZSX follows the browser/application level scroll setting. You can enable smooth scrolling by setting the `scroll-behavior` at the page level with CSS.
+
+```html
+<html lang="en" style="scroll-behavior: smooth;">
+```
+
+#### Scroll Margin
+
+Sometimes you want the scroll location to be just above the target element. You define this in CSS on the element that will be scrolled to with CSS.
+
+```html
+<div id="myElement" style="scroll-margin-top: 20px;"></div>
+```
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 ## zx-swap
 
@@ -354,247 +601,6 @@ For example, consider an element that needs to be visible or hidden. One link sh
 ```
 
 Because both the show and hide links have a zx-sync-params, that means the inverse link is ignored when updated. Therefore only the 'Other Link' gets updated to whatever show/hide link was clicked last.
-
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
-
-## zx-keep
-***true | false***
-
-Keeps an an element and its descendants unchanged when a parent is swapped out. Useful for maintaining page level content like video, audio forms or other interactive content that should not be swapped.
-
-**Used on tags:** any html element
-
-**Values Values:**
-
-- true: Keep the element when swapping out the parent
-- false: Do not keep the element when swapping out the parent
-
-
-### Usage
-
-```html
-<a href="/" zx-swap="#container">Update</a>
-<div id="container">
-	Updated Content
-	<div id="someContent" zx-keep="true">
-		Kept Conent
-	</div>
-</div>
-```
-
-<aside>
-<img src="https://www.notion.so/icons/error_green.svg" alt="https://www.notion.so/icons/error_green.svg" width="40px" />
-
-Element with zx-keep requires that an Id be set
-
-</aside>
-
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
-
-## zx-link-mode
-***browser | app***
-
-Specifies whether a link should behave like a regular browser link, or adopt a more application-like interaction.
-
-**Used on Tags:** `<a>`
-
-**Valid Values:**
-
-- `"browser"`: (default) Maintains standard browser link behavior, including displaying URL tooltips and offering content menus. This is the default.
-- `"app"`: Suppresses the URL tooltip and modifies the link's behavior to mimic a form button or application-like interaction.
-
-### Example Usage:
-
-```html
-<a href="https://example.com/page" zx-link-mode="browser">Standard Link</a>
-<a href="https://example.com/action" zx-link-mode="app">App-like Link</a>
-```
-
-### Use Cases
-
-Browsers provide some default features for links like tooltips, right click menu, and clicked and unclicked states. For some application where we want a desktop like app experience, disabling these default browser behaviors is desired.
-
-When `zx-link-mode="app"` the link is just clickable text. You handle all additional styling for the link.
-
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
-
-## zx-dialog-confirm
-***string***
-
-Generates a confirmation dialog modal to confirm the action before proceeding with the link or button click.
-
-**Used on Tags**: `<a>`, `<button>`
-
-**Valid Values:** Any text string
-
-There are additional attributes you can add to control the content:
-
-- **zx-dialog-confirm-title**: Sets a title for the dialog
-- **zx-dialog-confirm-yes**: The text of the yes/ok button
-- **zx-dialog-confirm-no**: The text of the no/cancel button
-
-### Usage:
-You should ask user for confirmation of actions that are sensitive and cannot be easily undone, or that has side effects. For example, deleting a record which cannot be recovered. Typically this will be used on form buttons (because links/GET should not make permanent changes)
-
-```html
-<button zx-dialog-confirm="Continue?">Hello</button>
-<a href="?hello=true" zx-dialog-confirm="Continue?">Hello</a>
-```
-
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
-
-## zx-scroll-to
-***true | false | top | if-needed | CSS selector***
-
-Tells ZSX to scroll to a particular element after completing a zx-swap. This can improve the user experience when the swapped elements may be out of view or we want to focus the new elements.
-
-**Used on Tags:** `<a>`, `<button>`
-
-**Valid Values:**
-
-- **`true | false`**: When true, scroll to the first zx-swap selector element. When false, this disables zx-scroll-to and also default browser hash fragment scrolling.
-- **`#idSelector`**: Scroll to the provided Id, regardless of the zx-swap selectors
-- `.classSelector` : Any valid CSS selector. The first item returned will be the target of the scroll
-- `"top"` : Scroll to the top of the page
-- `"if-needed"` : Scroll to the element if it is out of view otherwise do not scroll
-
-### Usage
-
-Browsers by default include scrolling to a URL hash fragement identifier. You can use zx-scroll-to for more complex scrolling scenarios like classes, 'top' of page, or 'if-needed'
-
-**Default Browser hash(#) identifier**
-
-When zx-swap is applied, if there is an id hash in the URL, it will scroll to that ID. This is the browser's semantic way to scroll to.
-
-```html
-<a href="/page#elementId" zx-swap="#elementId">Link</a>
-```
-
-**Scrolling to the Swap Target**
-
-When `zx-scroll-to="true"` it will scroll to the location of the `zx-swap`
-
-```html
-<a href="?hello=true" zx-swap="#targetContainer" zx-scroll-to="true">Hello</a>
-```
-
-#### Scrolling to the newest created element
-
-Sometimes as a result of adding a new item to the page, we will want to scroll to that item, except we do not know a unique ID for it because it does not exist yet. You can use a complex class selector to scroll to the last (or first) item.
-
-```html
-<button type="submit" zx-scroll-to=":nth-last-child(1 of .classList)">
-```
-
-#### Disable Page Change Scrolling
-
-By default, ZSX handles links to different pages (base paths) by scrolling to the top of the page. This matches default browser behavior and user expectations when switching pages.
-
-You can disable this by setting zx-scoll-to="false" on your links that you want to maintain the current scroll position between pages.
-
-```html
-<a href="/page1" zx-swap="#targetContainer" zx-scroll-to="false">Hello</a>
-<a href="/page2" zx-swap="#targetContainer" zx-scroll-to="false">Hello</a>
-```
-
-The reason for this behavior is that typically, in a multi-page appication, each page route is significantly different content. The usual experience is to start that page at the top of the content.
-
-#### Smooth Scrolling
-
-ZSX follows the browser/application level scroll setting. You can enable smooth scrolling by setting the `scroll-behavior` at the page level with CSS.
-
-```html
-<html lang="en" style="scroll-behavior: smooth;">
-```
-
-#### Scroll Margin
-
-Sometimes you want the scroll location to be just above the target element. You define this in CSS on the element that will be scrolled to with CSS.
-
-```html
-<div id="myElement" style="scroll-margin-top: 20px;"></div>
-```
-
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
-
-## zx-loader
-***true | false | cursor-wait | cursor-progress***
-
-Adds a visual progress indicator to buttons and links for requests that take time to complete.
-
-**Used on Tags:** `a`, `button`
-
-**Valid Values:**
-- **true**: Add a loading indicator when clicked
-- **false**: Do not add a loading indicator
-- **cursor-wait**: Change the cursor to the browsers default wait cursor
-- **cursor-progress**: Change the cursor to the browsers default progress cursor
-
-### Usage
-Use `zx-loader` for any action which is not or nearly not immediate. There are different types of loading indicators to suit your design requirements.
-
-- [`<a>` loading indicator](#a-loading-indicator)
-- [`<a>` link with 'wait' cursor](#a-link-with-wait-cursor)
-- [`<a>` link with 'progress' cursor](#a-link-with-progress-cursor)
-- [`<button>` loading indicator](#button-loading-indicator)
-
-#### `<a>` loading indicator
-
-Animates the background of the text with a progress indicator. Useful for App-Style links or links that look like buttons.
-
-![Link background loader](docs/img/link_with_loader.png)
-
-```html
-<a href="/path" zx-swap="#target" zx-loader="true">Link with Loader</a>
-```
-
-#### `<a>` link with 'wait' cursor
-
-Uses the browsers default wait cursor style. Useful for regular links where you want to disuade clicking the element again.
-
-```html
-<a href="/path" zx-swap="#target" zx-loader="cursor-wait">Link with Wait Cursor</a>
-```
-
-<span style="cursor:wait;">Hover to Show Cursor</span>
-
-You can override the `.zx-loading-cursor-wait` class if you need to customize the icon
-
-```css
-.zx-loading-cursor-wait {
-	cursor: wait !important;;
-}
-```
-
-#### `<a>` link with 'progress' cursor
-
-Uses the browsers default progress cursor style. Useful for regular links where it's okay for the user to click again
-
-```html
-<a href="/path" zx-swap="#target" zx-loader="cursor-wait">Link with Progress Cursor</a>
-```
-
-<span style="cursor:progress;">Hover to Show Cursor</span>
-
-You can override the `.zx-loading-cursor-progress` class if you need to customize the icon
-
-```css
-.zx-loading-cursor-wait {
-	cursor: wait !important;;
-}
-```
-
-#### `<button>` loading indicator
-
-Animates the button with a simulated progress indicator and disables the button until the request completes
-
-![Button Loading](docs/img/button_with_loader.png)
-
-```html
-<button type="submit" zx-loader="true">
-	Loading Indicator
-</button>
-```
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
@@ -780,6 +786,7 @@ Additional architectural tips and tricks for building maintainable and interacti
 - [User Interactions](#user-interactions)
 - [Using Loading Indicators](#using-loading-indicators)
 - [Using Animations](#using-animations)
+- [Performance Optimization](#performance-optimization)
 
 
 ## Understanding Application State
@@ -858,6 +865,50 @@ If you use any animations, they must do the following:
 - The user must never have to wait for the animation itself to finish to click the next action that is available.
 
 This means that you cannot wait to start animations after a request has finished. It's too late and ***will make the application feel sluggish***
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
+
+## UI Performace Optimization
+
+Most of the zsx processing is waiting on one of three operations: network requests, DOM swaps, and inline javascript. Decreasing the amount of time for these operations will have the biggest impact on application responsiveness.
+
+Follow these techniques in this order to improve the performance of your application:
+
+- [Optimize Network Requests](#optimizing-network-requests)
+- [Minimize zx-swap Targets](#minimzing-zx-swap-targets)
+- [Decrease Inline Javascript](#decreasing-inline-javascript)
+- [Syncrhonizing Links](#synchronizing-links)
+- [Disable Automatic Page Jump Supression](#disable-automatic-page-jump-supression)
+- [Server Side Fragments](#server-side-fragments)
+
+### Optimizing Network Requests
+You should always seek to first optimize the backend server performance. Requests which complete &lt; 100ms are going to feel almost instantaneous to the user. Fast server responses improve both full page loads, and subsequent zx-swap loads.
+
+Note: We find that the amount of raw HTML returned is not a significant factor, just response time. So a lot of HTML fully cached and quick from the server is a very viable optimization.
+
+### Minimzing zx-swap Targets
+The time it takes to place new HTML into the DOM is many time larger than it takes to parse the HTML. While parsing takes 1-10ms, DOM placement per swap target will be 5-100ms.
+
+Therefore you want to reduce the amount of HTML to be swapped, and the number of swaps that need to take place.
+
+Ideally, have each zx-swap only target the smallest parent that is necessary to update the content. Don't have more zx-swap targets that is necessary. Don't just zx-swap the body tag, instead think carefully about updating only specific page fragments.
+
+### Synchronizing Links
+Don't use zx-swap to replace link URLs on the page, as swapping is an expensive operation. You can use [`zx-sync-params`](#zx-sync-params) feature to update all links on the page to match the clicked URL.
+
+### Decreasing Inline Javascript
+zx-swap also executes any inline javascript and can be a source of unexpected delay. If the javascript is not necessary to run on every swap, move it outside of the target.
+
+### Disable Automatic Page Jump Supression
+COMING SOON:
+
+The page jump supression algorithim requires a document flow calculation and takes about 20ms per swap.
+
+### Server Side Fragments
+COMING SOON:
+
+The final optimization is to only have the server return partial HTML based on the zx-swap target that was requested. Because this adds complexity to the backend to maintain two rendering paths, we use this sparingly. Relying too much on server side fragments means that the initial page loads will be slow, which is not good UX. Also the amount of HTML returned is not a critical factor compared to the server response time. So only use this method when you can significantly decrease the server response.
+
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
