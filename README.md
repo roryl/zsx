@@ -786,7 +786,7 @@ Additional architectural tips and tricks for building maintainable and interacti
 - [User Interactions](#user-interactions)
 - [Using Loading Indicators](#using-loading-indicators)
 - [Using Animations](#using-animations)
-- [Performance Optimization](#performance-optimization)
+- [Performance Optimization](#ui-performance-optimization)
 
 
 ## Understanding Application State
