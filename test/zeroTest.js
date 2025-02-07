@@ -4,7 +4,7 @@ var expect = chai.expect;
 // @ts-ignore
 suite('ZsxJs', function() {
 
-	var ZsxJstest = new _ZsxJs.ZsxJs();
+	var ZsxJstest = new ZsxJs();
 
 	// @ts-ignore
 	setup(function() {

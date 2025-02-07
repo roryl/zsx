@@ -30,6 +30,7 @@ ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to fram
 
 Include the zsx.js script. It can be in the head or end of the body
 
+## Installation
 ```html
 <head>
 	<!-- Style sheet for ZSX loading indicator styles -->
@@ -44,6 +45,16 @@ Include the zsx.js script. It can be in the head or end of the body
 	<script src="dist/zsx.js"></script>
 </body>
 ```
+## Initialization
+
+```html
+<script>
+	let zsxjs = new ZsxJs();
+	zsxjs.init(document, {
+		/* options */
+	});
+</script>
+```
 
 ↑ [top](#zsxjs)
 
@@ -52,27 +63,33 @@ Include the zsx.js script. It can be in the head or end of the body
 ```html
 <!--- SERVER SIDE RENDERED HANDLEBARS TEMPLATE --->
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="dist/zsx.css">
-	<script src="dist/zsx.js"></script>
-	<title>ZSX - QuickStart</title>
-</head>
-<body>
-	<h1>ZSX QuickStart</h1>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="dist/zsx.css">
+		<script src="dist/zsx.js"></script>
+		<title>ZSX - QuickStart</title>
+	</head>
+	<body>
+		<h1>ZSX QuickStart</h1>
 
-	<a href="?hello=true" zx-swap="#targetContent">Hello</a>
-	<a href="?hello=false" zx-swap="#targetContent">Good Bye</a>
+		<a href="?hello=true" zx-swap="#targetContent">Hello</a>
+		<a href="?hello=false" zx-swap="#targetContent">Good Bye</a>
 
-	<div id="targetContent" style="width: 300px; height:100px;">
-		{{#if url.hello}}
-			Hello World
-		{{else}}
-			Goodbye World
-		{{/if}}
-	</div>
-</body>
+		<div id="targetContent" style="width: 300px; height:100px;">
+			{{#if url.hello}}
+				Hello World
+			{{else}}
+				Goodbye World
+			{{/if}}
+		</div>
+		<script>
+			let zsxjs = new ZsxJs();
+			zsxjs.init(document, {
+				/* options */
+			});
+		</script>
+	</body>
 </html>
 ```
 

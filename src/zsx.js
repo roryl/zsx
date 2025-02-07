@@ -26,7 +26,7 @@
  */
 
 var _ZsxJs = {};
-_ZsxJs.ZsxJs = class ZsxJs {
+class ZsxJs {
 
 	constructor(){
 	}
@@ -1004,7 +1004,7 @@ _ZsxJs.ZsxJs = class ZsxJs {
 
 			//if not undefined
 			if(zeroSyncParams !== null){
-				this._syncLinkParams(dom, uri, zeroSyncParams);
+				this._syncLinkParams(document, uri, zeroSyncParams);
 			}
 
 			// callback(null, body); // Success: call the callback with no error and the body
@@ -1139,5 +1139,5 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	}
 }
 
-let ZsxJs = new _ZsxJs.ZsxJs();
-ZsxJs.init(document);
+// ZsxJs = new _ZsxJs.ZsxJs;
+// ZsxJs.init(document);
