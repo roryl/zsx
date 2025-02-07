@@ -8,7 +8,21 @@
  */
 
 /**
+ * @typedef {(Document|DocumentFragment)} DOMEditable
+ */
+
+/**
  * @typedef {Object<string, string>} ZeroSyncParams
+ */
+
+/**
+ * @typedef {Object} ZxTrigger
+ * @property {string} url - The url of the request
+ * @property {string} method - The method of the request
+ * @property {string|null} zxSwap - The selectors to swap
+ * @property {*|null} zxJumpGuard - An object with a 'value' property of type string, or null.
+ * @property {*|null} zxLinkMode - An object with a 'value' property of type string, or null.
+ * @property {string|null} zxScrollTo - An object with a 'value' property of type string, or null.
  */
 
 var _ZsxJs = {};
@@ -138,6 +152,65 @@ _ZsxJs.ZsxJs = class ZsxJs {
 		});
 	}
 
+	/**
+	 * Parses link, button and form elements and sets up all of the zx-
+	 * attributes that are present
+	 * @param {HTMLAnchorElement|HTMLFormElement} requestElement
+	 * @param {HTMLButtonElement|null} clickedButton
+	 * @returns {ZxTrigger} zxTrigger
+	 */
+	_normalizeZxTrigger(
+		requestElement,
+		clickedButton
+	){
+		var out = {};
+		out.type = { isLink: false, isForm: false };
+
+		if(requestElement instanceof HTMLAnchorElement){
+			out.type.isLink = true;
+			out.method = 'get';
+			out.url = requestElement.href;
+		} else if(requestElement instanceof HTMLFormElement){
+
+			out.type.isForm = true;
+
+			if(clickedButton !== null && clickedButton instanceof HTMLButtonElement){
+				out.method = clickedButton.getAttribute('formmethod') || requestElement.method;
+				out.url = clickedButton.getAttribute('formaction') || requestElement.action;
+			}
+
+		} else {
+			throw new Error('ZsxJs: requestElement is not an anchor link or form. We should not be here');
+		}
+
+		out.zxSwap = this._coalesceZxAttribute(clickedButton, requestElement, 'zx-swap');
+		out.zxJumpGuard = this._coalesceZxAttribute(clickedButton, requestElement, 'zx-jump-guard');
+		out.zxLinkMode = this._coalesceZxAttribute(clickedButton, requestElement, 'zx-link-mode');
+		out.zxScrollTo = this._coalesceZxAttribute(clickedButton, requestElement, 'zx-scroll-to');
+		// this._coalesceZxAttribute(clickedButton, requestElement, 'zx-swap');
+		// console.log('zx-swap:' + zxSwapAttribute);
+
+		return out;
+	}
+
+	/**
+	 * @param {HTMLButtonElement|null} a
+	 * @param {HTMLAnchorElement|HTMLFormElement} b
+	 * @param {string} attribute
+	 */
+	_coalesceZxAttribute(a, b, attribute){
+
+		if(a !== undefined && a !== null && a.hasAttribute(attribute)){
+			return a.getAttribute(attribute);
+		}
+
+		if(b.hasAttribute(attribute)){
+			return b.getAttribute(attribute);
+		}
+
+		return null;
+	}
+
 
 	/**
 	 * Syncs the given parameters with other links on the page
@@ -149,12 +222,14 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	 */
 	_syncLinkParams(dom, link, syncParams){
 
-		// this.log('sync link params: ' + link + ' ' + syncParams.toString());
+		this.log('sync link params: ' + link + ' ' + syncParams.toString());
 		var linkBasePath = link.split('?')[0];
 		var linkParamString = link.split('?')[1];
 		var linkParams = new URLSearchParams(linkParamString);
 
-		var aLinks = document.querySelectorAll('a');
+		var theDom = dom || document;
+
+		var aLinks = theDom.querySelectorAll('a');
 
 		// For each alink, we need to loop through the trackUrlParams and update the values
 		// to match those provided in the linkParams
@@ -172,9 +247,9 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			}
 
 			if(isAppLink){
-				var href = aLink.getAttribute('data-href');
+				var href = aLink.getAttribute('data-href') || '';
 			} else {
-				var href = aLink.getAttribute('href');
+				var href = aLink.href;
 			}
 
 			// If the href is null, then we are going to skip this link
@@ -223,6 +298,7 @@ _ZsxJs.ZsxJs = class ZsxJs {
 				anyLinksTouched = true;
 			}
 
+
 			if(anyLinksTouched){
 
 				// this.log(urlParams.toString());
@@ -244,15 +320,14 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	 * for zx-scroll-to and scroll to the position
 	 * @param {string} priorLocation - The location before the swap
 	 * @param {string} currentLocation - The location after the swap
-	 * @param {HTMLAnchorElement|HTMLButtonElement} clickedElement - The element that was clicked
-	 * @param {HTMLFormElement|null} submittedForm - The form that was submitted, if any
+	 * @param {ZxTrigger} zxTrigger
 	 */
-	_parseAndExecuteElementScrollTo(priorLocation, currentLocation, clickedElement, submittedForm){
+	_parseAndExecuteElementScrollTo(priorLocation, currentLocation, zxTrigger){
 
 		// var hasScrollTo = false;
-		if(clickedElement.hasAttribute('zx-scroll-to')){
-			var hasScrollTo = true;
-			var scrollTo = clickedElement.getAttribute('zx-scroll-to') || '';
+		if(zxTrigger.zxScrollTo){
+			var willScroll = true;
+			var scrollTo = zxTrigger.zxScrollTo;
 		} else {
 
 			//Pasrse the currentLocation URL
@@ -260,16 +335,15 @@ _ZsxJs.ZsxJs = class ZsxJs {
 
 			//Check if we have a fragement identifier
 			if(currentURL.hash){
-				var hasScrollTo = true;
+				var willScroll = true;
 				var scrollTo = currentURL.hash;
 			} else {
-				var hasScrollTo = false;
+				var willScroll = false;
 				scrollTo = '';
 			}
 		}
 
-		if(hasScrollTo){
-
+		if(willScroll){
 			var scrollToIsBoolean = scrollTo === 'true' || scrollTo === 'false';
 			var scrollToIsTargetId = scrollTo.includes('#');
 			var scrollToIsClass = scrollTo.includes('.');
@@ -277,17 +351,10 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			var scrollToIsIfNeeded = scrollTo === 'if-needed';
 
 			if(scrollToIsBoolean){
+
 				if(scrollTo === 'true'){
 
-					if(clickedElement.hasAttribute('zx-swap')){
-						var swapSelector = clickedElement.getAttribute('zx-swap');
-					} else {
-						if(submittedForm !== null){
-							var swapSelector = submittedForm.getAttribute('zx-swap');
-						} else {
-							throw new Error('ZsxJs: zx-swap is null when zx-scroll-to is true');
-						}
-					}
+					var swapSelector = zxTrigger.zxSwap;
 
 					if(swapSelector === null){
 						throw new Error('ZsxJs: zx-swap is null when zx-scroll-to is true');
@@ -327,13 +394,14 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	 * @param {DOMQueryable} dom
 	 * @param {string} response
 	 * @param {string} selectorsToSwap
+	 * @param {ZxTrigger} zxTrigger
 	 */
-	_parseResponseAndSwapSelectors(dom, response, selectorsToSwap){
+	_parseResponseAndSwapSelectors(dom, response, selectorsToSwap, zxTrigger){
 		var selectorArray = selectorsToSwap.split(',');
 		var parser = new DOMParser();
 		var responseDom = parser.parseFromString(response, 'text/html');
 		selectorArray.forEach((selector) => {
-			this._parseResponseAndSwapSelector(dom, responseDom, selector);
+			this._parseResponseAndSwapSelector(dom, responseDom, selector, zxTrigger);
 		});
 	}
 
@@ -343,11 +411,13 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	 * @param {DOMQueryable} dom
 	 * @param {Document} responseDom
 	 * @param {string} selector
+	 * @param {ZxTrigger} zxTrigger
 	 */
 	_parseResponseAndSwapSelector(
 		dom,
 		responseDom,
 		selector,
+		zxTrigger
 	){
 
 		this.log('start _parseResponseAndSwapSelector');
@@ -405,7 +475,7 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			var newTargetElement = responseDom.querySelector(responseSelector);
 
 			if(newTargetElement !== null){
-				this._doSwap(dom, originalTargetElement, newTargetElement, responseSelector);
+				this._doSwap(document, originalTargetElement, newTargetElement, responseSelector, zxTrigger);
 			}
 
 		});
@@ -420,8 +490,9 @@ _ZsxJs.ZsxJs = class ZsxJs {
 	 * @param {Element} oldElement
 	 * @param {Element} newElement
 	 * @param {string} selector
+	 * @param {ZxTrigger} zxTrigger
 	 */
-	_doSwap(dom, oldElement, newElement, selector){
+	_doSwap(dom, oldElement, newElement, selector, zxTrigger){
 
 		var keepElements = oldElement.querySelectorAll('[zx-keep]');
 
@@ -436,6 +507,24 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			}
 		});
 
+		var theDom = dom || document;
+
+		// Create dummpy body and head elements if they do not exist
+		// which is used by testing code to keep elements and scripts
+		var domBody = theDom.querySelector('body');
+		if(domBody === null){
+			//Create a body element if it does not exist
+			domBody = document.createElement('body');
+			theDom.appendChild(domBody);
+		}
+
+		var domHead = theDom.querySelector('head');
+		if(domHead === null){
+			//Create a head element if it does not exist
+			domHead = document.createElement('head');
+			theDom.appendChild(domHead);
+		}
+
 		// Create a document fragment to hold these elements temporarily
 		var fragment = document.createDocumentFragment();
 		keepElements.forEach((keepElement) => {
@@ -445,21 +534,23 @@ _ZsxJs.ZsxJs = class ZsxJs {
 		// Get the height of the oldElement that we will replace that is currently in the body
 		var oldElementHeight = oldElement.scrollHeight;
 
-		// Get or create spacer div #zeroViewportSpacer to end of body
-		var zeroViewportSpacer = document.getElementById('zeroViewportSpacer');
-		if (!zeroViewportSpacer) {
-			zeroViewportSpacer = document.createElement('div');
-			zeroViewportSpacer.id = 'zeroViewportSpacer';
-			document.body.appendChild(zeroViewportSpacer);
-		}
 
-		// Add the oldElementHeight to the spacer min-height to keep the body from collapsing
-		var currentMinHeight = parseInt(zeroViewportSpacer.style.minHeight || '0') + oldElementHeight;
-		zeroViewportSpacer.style.minHeight = currentMinHeight + 'px';
+		if(zxTrigger.zxJumpGuard && zxTrigger.zxJumpGuard === 'true'){
+			/** @type HTMLElement|null */
+			var zeroViewportSpacer = theDom.querySelector('#zeroViewportSpacer');
+			if (!zeroViewportSpacer) {
+				zeroViewportSpacer = document.createElement('div');
+				zeroViewportSpacer.id = 'zeroViewportSpacer';
+				domBody.appendChild(zeroViewportSpacer);
+			}
+			// Add the oldElementHeight to the spacer min-height to keep the body from collapsing
+			var currentMinHeight = parseInt(zeroViewportSpacer.style.minHeight || '0') + oldElementHeight;
+			zeroViewportSpacer.style.minHeight = currentMinHeight + 'px';
+		}
 
 		oldElement.outerHTML = newElement.outerHTML;
 
-		var finalNewElement = document.querySelector(selector);
+		var finalNewElement = theDom.querySelector(selector);
 
 		//If the finalNewElement is null, then we are going to throw an error
 		if(finalNewElement === null){
@@ -490,11 +581,10 @@ _ZsxJs.ZsxJs = class ZsxJs {
 
 			// Append the new script to the document head
 			// which executes the script
-			var newChild = document.head.appendChild(newScript);
+			var newChild = domHead.appendChild(newScript);
 			// Now remove the old script from the head to prevent memory leaks
 			// as the script has already been executed
 			newChild.remove();
-
 		}
 
 		keepElements.forEach((keepElement) => {
@@ -502,7 +592,7 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			if(newElement !== null){
 
 				var idSelector = `#${keepElement.id}`;
-				var oldKeep = document.querySelector(idSelector);
+				var oldKeep = theDom.querySelector(idSelector);
 
 				if(oldKeep !== null){
 					// replace oldKeep nodes with keepElement not using outerHTML
@@ -523,19 +613,27 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			}
 		});
 
-		// Get there the top of the spacer is in relation to the viewport
-		var zeroViewportSpacerTop = zeroViewportSpacer.getBoundingClientRect().top;
 
-		// If the spacer is below the viewport, then we can set its hight to 0
-		// because it is not needed
-		if(zeroViewportSpacerTop >= window.innerHeight){
-			zeroViewportSpacer.style.minHeight = '0px';
-		} else {
-			// If the spacer is above the viewport, then we need to set its height at least
-			// the height of the viewport minus the top of the spacer so that the page
-			// does not collapse
-			var newSpacerHeight = window.innerHeight - zeroViewportSpacerTop;
-			zeroViewportSpacer.style.minHeight = newSpacerHeight + 'px';
+		if(zxTrigger.zxJumpGuard && zxTrigger.zxJumpGuard === 'true'){
+			// Get the spacer element
+			/** @type HTMLElement|null */
+			var zeroViewportSpacer = theDom.querySelector('#zeroViewportSpacer');
+			if(zeroViewportSpacer !== null){
+				// Get there the top of the spacer is in relation to the viewport
+				var zeroViewportSpacerTop = zeroViewportSpacer.getBoundingClientRect().top;
+
+				// If the spacer is below the viewport, then we can set its hight to 0
+				// because it is not needed
+				if(zeroViewportSpacerTop >= window.innerHeight){
+					zeroViewportSpacer.style.minHeight = '0px';
+				} else {
+					// If the spacer is above the viewport, then we need to set its height at least
+					// the height of the viewport minus the top of the spacer so that the page
+					// does not collapse
+					var newSpacerHeight = window.innerHeight - zeroViewportSpacerTop;
+					zeroViewportSpacer.style.minHeight = newSpacerHeight + 'px';
+				}
+			}
 		}
 
 		this.emitEvent('zsx.zx-swap.after', {
@@ -581,7 +679,6 @@ _ZsxJs.ZsxJs = class ZsxJs {
 					element.classList.add(`zx-loading-${loader}`);
 					document.body.classList.add(`zx-loading-${loader}`);
 				}
-
 			}
 		}
 
@@ -752,33 +849,20 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			e.preventDefault();
 
 			var self = this;
-			var action = form.action;
-			var method = form.method;
-			var formData = new FormData(form);
 			var clickedButton = e.submitter;
-			var locationPriorToFetch = window.location.href;
 
-			var selectorsToSwap = form.getAttribute('zx-swap');
+			if(clickedButton !== null && clickedButton instanceof HTMLButtonElement){
+				var zxTrigger = self._normalizeZxTrigger(form, clickedButton);
+			} else {
+				var zxTrigger = self._normalizeZxTrigger(form, null);
+			}
+
+			var formData = new FormData(form);
+			var locationPriorToFetch = window.location.href;
+			var selectorsToSwap = zxTrigger.zxSwap;
 
 			// Append the button's name and value if they exist
 			if (clickedButton !== null) {
-
-				//If the clickedButton has a formAction then we need to set the action to the formAction
-				if(clickedButton.hasAttribute('formaction')){
-					var formAction = clickedButton.getAttribute('formaction');
-					if(formAction !== null){
-						action = formAction;
-					}
-				}
-
-				//If the clickedButton has a formMethod then we need to set the method to the formMethod
-				if(clickedButton.hasAttribute('formmethod')){
-					var formMethod = clickedButton.getAttribute('formmethod');
-					if(formMethod !== null){
-						method = formMethod;
-					}
-				}
-
 				if(clickedButton.hasAttribute('name') && clickedButton.hasAttribute('value')){
 					var name = clickedButton.getAttribute('name');
 					var value = clickedButton.getAttribute('value') || '';
@@ -796,10 +880,10 @@ _ZsxJs.ZsxJs = class ZsxJs {
 			}
 
 			var requestData = {
-				method: method,
+				method: zxTrigger.method,
 			}
 
-			if(method == 'post'){
+			if(zxTrigger.method == 'post'){
 				// @ts-ignore
 				requestData.body = formData;
 			}
@@ -814,7 +898,7 @@ _ZsxJs.ZsxJs = class ZsxJs {
 				if(response.redirected){
 					var path = response.url;
 				} else {
-					var path = action;
+					var path = zxTrigger.url;
 				}
 
 				response.text().then(content => {
@@ -823,14 +907,13 @@ _ZsxJs.ZsxJs = class ZsxJs {
 						throw new Error('ZsxJs: selectorsToSwap is null');
 					}
 
-					self._parseResponseAndSwapSelectors(dom, content, selectorsToSwap);
+					self._parseResponseAndSwapSelectors(dom, content, selectorsToSwap, zxTrigger);
 
 					if(clickedButton !== null && clickedButton instanceof HTMLButtonElement){
 						self._parseAndExecuteElementScrollTo(
 							locationPriorToFetch,
 							path,
-							clickedButton,
-							form
+							zxTrigger
 						);
 					}
 
@@ -846,7 +929,7 @@ _ZsxJs.ZsxJs = class ZsxJs {
 				// callback(null, body); // Success: call the callback with no error and the body
 			}
 
-			fetch(action, requestData).then(response => {
+			fetch(zxTrigger.url, requestData).then(response => {
 
 				if (!response.ok) {
 					throw new Error('Network response was not ok');
@@ -894,7 +977,9 @@ _ZsxJs.ZsxJs = class ZsxJs {
 				throw new Error('ZsxJs: swapSelectors is null');
 			}
 
-			this._parseResponseAndSwapSelectors(dom, content, swapSelectors);
+			var zxTrigger = this._normalizeZxTrigger(triggerAnchorElement, null);
+
+			this._parseResponseAndSwapSelectors(dom, content, swapSelectors, zxTrigger);
 
 			// When we are restoring from history we do not want to trigger the scroll
 			// because the scroll is already handled by the browser when the history is popped
@@ -902,8 +987,7 @@ _ZsxJs.ZsxJs = class ZsxJs {
 				this._parseAndExecuteElementScrollTo(
 					window.location.href,
 					uri,
-					triggerAnchorElement,
-					null
+					zxTrigger
 				);
 			}
 

@@ -87,7 +87,7 @@ ZSX upgrades links, forms and buttons to make applications more responsive and s
  - [Preserve Client-Side Content During Swaps](#preserve-client-side-content-during-swaps) — [`zx-keep`](#zx-keep)
 
 **Enhanced Visual Fidelity**:
- - [Automatic Page Jump Supression](#automatic-page-jump-supression)
+ - [Page Jump Supression](#page-jump-supression)
  - [Visual Loading Indicators](#visual-loading-indicators) — [`zx-loader`](#zx-loader)
  - [Scroll Elements Into View](#scroll-elements-into-view) — [`zx-scroll-to`](#zx-scroll-to)
  - [Action Confirmation Dialogs](#action-confirmation-dialogs) — [`zx-dialog-confim`](#zx-dialog-confirm)
@@ -119,15 +119,13 @@ See [`zx-keep`](#zx-keep-true--false)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
-## Automatic Page Jump Supression
+## Page Jump Supression
 
-ZSX will minimize disruptive page jumps from removed content.
+ZSX can minimize disruptive page jumps from removed content.
 
 When elements are removed from the DOM, the page may abruptly jump upward if the combined height of the remaining content and the viewport is less than the current scroll position.
 
-ZSX manages the content height of elements that are being swapped to ensure that the page does not jump.
-
-***This feature is automatic and does not require any zx-attributes***
+See [`zx-jump-guard`](#zx-jump-guard)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
@@ -202,6 +200,7 @@ ZSX works by adding attributes to your existing HTML markup.
 | attribute | Description |
 | --- | --- |
 | [zx-dialog-confirm](#zx-dialog-confirm) | Confirmation question before proceeding wtih the click |
+| [zx-jump-guard](#zx-jump-guard) | Guards against page jumps from removed content
 | [zx-keep](#zx-keep) | Keeps specified content in the DOM after a parent element is swapped  |
 | [zx-link-mode](#zx-link-mode) | Whether to render the link as a browser (default) link or an application clickable element |
 | [zx-loader](#zx-loader) | Specify that the link or button should have a loading indicator |
@@ -210,7 +209,7 @@ ZSX works by adding attributes to your existing HTML markup.
 | [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links |
 
 ## zx-dialog-confirm
-***string***
+**`string`**
 
 Generates a confirmation dialog modal to confirm the action before proceeding with the link or button click.
 
@@ -234,8 +233,56 @@ You should ask user for confirmation of actions that are sensitive and cannot be
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
+## zx-jump-guard
+**`true | false`**
+
+Enables or disables the use of a spacer element to guard against page jumps when content is expected to shrink or be removed.
+
+**Used on Tags:** `<a>`, `<button>`, `<form>`
+
+**Valid Values:**
+- `true`: Activates the spacer to maintain page stability and prevent jumps during content changes.
+- `false`: Deactivates the spacer, allowing the page to adjust naturally, which may result in jumps.
+
+### Example Usage:
+
+#### `<a>` zx-jump-guard
+
+```html
+<a href="/shrinkContent" zx-swap="#targetContent" zx-jump-guard="true">Shrink Content</a>
+```
+
+#### `<form>` zx-jump-guard
+```html
+<form action="/home/echo" method="POST" zx-swap="#container" zx-jump-guard="true">
+	<button id="button" type="submit">Form Swap</button>
+</form>
+```
+
+#### `<button>` zx-jump-guard
+The button within a form can also have zx-jump-guard, which will override the `<form>` value if it exists
+
+```html
+<form action="/home/echo" method="POST" zx-swap="#container" zx-jump-guard="false">
+	<button id="button" type="submit" zx-jump-guard="true">Form Swap</button>
+</form>
+```
+
+### Usage Guidelines:
+
+When elements are removed from the DOM, the page may abruptly jump upward if the combined height of the remaining content and the viewport is less than the current scroll position.
+
+`zx-jump-guard` manages the content height of elements that are being swapped to ensure that the page does not jump.
+
+Calculating the page size to prevent jumps is an expensive (about 20ms) operation per swap. Therefore only add `zx-jump-guard` where you expect content may be removed or shrink.
+
+- Use `zx-jump-guard="true"` for links, buttons or forms that swap content likely to cause large decreases in content size, ensuring that user experience remains smooth and uninterrupted.
+- Set `zx-jump-guard="false"` disables zx-jump-guard
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
+
 ## zx-keep
-***true | false***
+**`true | false`**
 
 Keeps an an element and its descendants unchanged when a parent is swapped out. Useful for maintaining page level content like video, audio forms or other interactive content that should not be swapped.
 
@@ -271,7 +318,7 @@ Element with zx-keep requires that an Id be set
 
 
 ## zx-link-mode
-***browser | app***
+**`browser | app`**
 
 Specifies whether a link should behave like a regular browser link, or adopt a more application-like interaction.
 
@@ -299,7 +346,7 @@ When `zx-link-mode="app"` the link is just clickable text. You handle all additi
 
 
 ## zx-loader
-***true | false | cursor-wait | cursor-progress***
+**`true | false | cursor-wait | cursor-progress`**
 
 Adds a visual progress indicator to buttons and links for requests that take time to complete.
 
@@ -381,7 +428,7 @@ Animates the button with a simulated progress indicator and disables the button 
 
 
 ## zx-scroll-to
-***true | false | top | if-needed | CSS selector***
+**`true | false | top | if-needed | CSS selector`**
 
 Tells ZSX to scroll to a particular element after completing a zx-swap. This can improve the user experience when the swapped elements may be out of view or we want to focus the new elements.
 
@@ -455,6 +502,7 @@ Sometimes you want the scroll location to be just above the target element. You 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 ## zx-swap
+**`#idSelector | .classSelector | tag-selector | list` **
 
 Swap out content in the current page with content from the response HTML. Specify the CSS selectors to target.
 
@@ -536,7 +584,7 @@ ZSX will update the URL history to the value of any GET redirect. POST redirects
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 ## zx-sync-params
-***string list***
+**`string list`**
 
 Synchronizes parameters from an `<a>` link click with other links on the page.
 
@@ -878,7 +926,7 @@ Follow these techniques in this order to improve the performance of your applica
 - [Minimize zx-swap Targets](#minimzing-zx-swap-targets)
 - [Decrease Inline Javascript](#decreasing-inline-javascript)
 - [Syncrhonizing Links](#synchronizing-links)
-- [Disable Automatic Page Jump Supression](#disable-automatic-page-jump-supression)
+- [Disable Page Jump Supression](#disable-automatic-page-jump-supression)
 - [Server Side Fragments](#server-side-fragments)
 
 ### Optimizing Network Requests
@@ -899,7 +947,7 @@ Don't use zx-swap to replace link URLs on the page, as swapping is an expensive 
 ### Decreasing Inline Javascript
 zx-swap also executes any inline javascript and can be a source of unexpected delay. If the javascript is not necessary to run on every swap, move it outside of the target.
 
-### Disable Automatic Page Jump Supression
+### Disable Page Jump Supression
 COMING SOON:
 
 The page jump supression algorithim requires a document flow calculation and takes about 20ms per swap.
