@@ -87,7 +87,7 @@ ZSX upgrades links, forms and buttons to make applications more responsive and s
  - [Preserve Client-Side Content During Swaps](#preserve-client-side-content-during-swaps) — [`zx-keep`](#zx-keep)
 
 **Enhanced Visual Fidelity**:
- - [Page Jump Supression](#page-jump-supression)
+ - [Page Jump Supression](#page-jump-supression) - [`zx-jump-guard`](#zx-jump-guard)
  - [Visual Loading Indicators](#visual-loading-indicators) — [`zx-loader`](#zx-loader)
  - [Scroll Elements Into View](#scroll-elements-into-view) — [`zx-scroll-to`](#zx-scroll-to)
  - [Action Confirmation Dialogs](#action-confirmation-dialogs) — [`zx-dialog-confim`](#zx-dialog-confirm)
