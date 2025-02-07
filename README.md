@@ -1,6 +1,6 @@
 # ZSX.js
 
-Build ***Zero JavaScript User Experiences***
+Build a ***Zero JavaScript*** **User Experience** ;)
 
 ZSX is a dependency free progressive enhancement library for server-rendered web applications. ZSX uses only semantic HTML, CSS, URLs, links, forms, and buttons to improve the user experience.
 
@@ -13,8 +13,7 @@ ZSX is a dependency free progressive enhancement library for server-rendered web
 
 ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), [Turbo](https://turbo.hotwired.dev/) and [Fixi.js](https://github.com/bigskysoftware/fixi), but with an opinionated featureset.
 
-[ChartSQL Studio Editor](https://docs.chartsql.com) was inspiration and first application built with ZSX.
-
+[ChartSQL Studio Editor](https://docs.chartsql.com) was the inspiration and first application build with ZSX.
 
 ## Table of Contents
 
@@ -977,7 +976,6 @@ Follow these techniques in this order to improve the performance of your applica
 - [Minimize zx-swap Targets](#minimzing-zx-swap-targets)
 - [Decrease Inline Javascript](#decreasing-inline-javascript)
 - [Syncrhonizing Links](#synchronizing-links)
-- [Disable Page Jump Supression](#disable-automatic-page-jump-supression)
 - [Server Side Fragments](#server-side-fragments)
 
 ### Optimizing Network Requests
@@ -997,11 +995,6 @@ Don't use zx-swap to replace link URLs on the page, as swapping is an expensive 
 
 ### Decreasing Inline Javascript
 zx-swap also executes any inline javascript and can be a source of unexpected delay. If the javascript is not necessary to run on every swap, move it outside of the target.
-
-### Disable Page Jump Supression
-COMING SOON:
-
-The page jump supression algorithim requires a document flow calculation and takes about 20ms per swap.
 
 ### Server Side Fragments
 COMING SOON:
@@ -1053,7 +1046,7 @@ document.addEventListener('zsx.zx-swap.after', function(event) {
 })
 ```
 
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | [Cookbook](#cookbook) | *next section* → [Common Errors](#common-errors)
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | [Cookbook](#cookbook) | *next section* → [Roadmap](#roadmap)
 
 # Roadmap
 Features or improvements to be completed
@@ -1062,6 +1055,7 @@ Features or improvements to be completed
 | --- |
 | Enhance zx-dialog-confirm to work from either buttons or forms
 
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | [Cookbook](#cookbook) | [Roadmap](#roadmap) | *next section* → [Common Errors](#common-errors)
 
 # Common Errors
 
