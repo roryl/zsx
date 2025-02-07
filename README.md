@@ -25,6 +25,7 @@ ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to fram
 - [ZSX Design Goals](#zsx-design-goals)
 - [Developing Applications](#developing-applications)
 - [Cookbook](#cookbook)
+- [Roadmap](#roadmap)
 
 # Quick Start
 
@@ -223,13 +224,23 @@ There are additional attributes you can add to control the content:
 - **zx-dialog-confirm-yes**: The text of the yes/ok button
 - **zx-dialog-confirm-no**: The text of the no/cancel button
 
-### Usage:
-You should ask user for confirmation of actions that are sensitive and cannot be easily undone, or that has side effects. For example, deleting a record which cannot be recovered. Typically this will be used on form buttons (because links/GET should not make permanent changes)
+### Examples:
 
+#### `<a>` anchor links
 ```html
-<button zx-dialog-confirm="Continue?">Hello</button>
 <a href="?hello=true" zx-dialog-confirm="Continue?">Hello</a>
 ```
+
+#### `<button>` buttons inside forms
+```html
+<form method="post" action="/foo" zx-swap="#container">
+	<button zx-dialog-confirm="Continue?">Hello</button>
+</form>
+```
+
+### Usage Guidelines
+You should ask user for confirmation of actions that are sensitive and cannot be easily undone, or that has side effects. For example, deleting a record which cannot be recovered. Typically this will be used on form buttons (because links/GET should not make permanent changes).
+
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
@@ -246,20 +257,20 @@ Enables or disables the use of a spacer element to guard against page jumps when
 
 ### Example Usage:
 
-#### `<a>` zx-jump-guard
+#### `<a>` anchor links
 
 ```html
 <a href="/shrinkContent" zx-swap="#targetContent" zx-jump-guard="true">Shrink Content</a>
 ```
 
-#### `<form>` zx-jump-guard
+#### `<form>` forms
 ```html
 <form action="/home/echo" method="POST" zx-swap="#container" zx-jump-guard="true">
 	<button id="button" type="submit">Form Swap</button>
 </form>
 ```
 
-#### `<button>` zx-jump-guard
+#### `<button>` form buttons
 The button within a form can also have zx-jump-guard, which will override the `<form>` value if it exists
 
 ```html
@@ -294,7 +305,7 @@ Keeps an an element and its descendants unchanged when a parent is swapped out. 
 - false: Do not keep the element when swapping out the parent
 
 
-### Usage
+### Examples
 
 ```html
 <a href="/" zx-swap="#container">Update</a>
@@ -313,6 +324,10 @@ Element with zx-keep requires that an Id be set
 
 </aside>
 
+### Usage Guidelines
+
+To perform a zx-keep, ZSX needs to move, swap and restore the elements which is a costly operation. In conjunction with targeted use of zx-swap, use zx-keep on the elements that are necessary to retain.
+
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 
@@ -326,21 +341,31 @@ Specifies whether a link should behave like a regular browser link, or adopt a m
 
 **Valid Values:**
 
-- `"browser"`: (default) Maintains standard browser link behavior, including displaying URL tooltips and offering content menus. This is the default.
+- `"browser"`: (default link behavior) Maintains standard browser link behavior, including displaying URL tooltips and offering content menus. This is the default.
 - `"app"`: Suppresses the URL tooltip and modifies the link's behavior to mimic a form button or application-like interaction.
 
-### Example Usage:
+### Examples:
+
+#### App Link
 
 ```html
-<a href="https://example.com/page" zx-link-mode="browser">Standard Link</a>
 <a href="https://example.com/action" zx-link-mode="app">App-like Link</a>
 ```
 
-### Use Cases
+#### Browser Link
+This works exactly like a typical link and is provided in case we provide more types in the future
+
+```html
+<a href="https://example.com/page" zx-link-mode="browser">Standard Link</a>
+```
+
+### Usage Guidelines
 
 Browsers provide some default features for links like tooltips, right click menu, and clicked and unclicked states. For some application where we want a desktop like app experience, disabling these default browser behaviors is desired.
 
 When `zx-link-mode="app"` the link is just clickable text. You handle all additional styling for the link.
+
+You'll typically want app style links when links wrap more complex context than just a test string, like cards, list items or links styles as buttons.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
@@ -358,8 +383,7 @@ Adds a visual progress indicator to buttons and links for requests that take tim
 - **cursor-wait**: Change the cursor to the browsers default wait cursor
 - **cursor-progress**: Change the cursor to the browsers default progress cursor
 
-### Usage
-Use `zx-loader` for any action which is not or nearly not immediate. There are different types of loading indicators to suit your design requirements.
+### Examples
 
 - [`<a>` loading indicator](#a-loading-indicator)
 - [`<a>` link with 'wait' cursor](#a-link-with-wait-cursor)
@@ -424,6 +448,16 @@ Animates the button with a simulated progress indicator and disables the button 
 </button>
 ```
 
+### Usage Guidelines
+Use `zx-loader` for any action which is not, or nearly not immediate. You *shouldn't* add loaders to elements which do not have much delay because the quick flash of the loader is more distracting.
+
+We provide different types of loading styles that serve different UX purposes.
+
+- **progress**: Used to imply that an operation is proceeding. The simulated progress indicator gives a feeling that the application is moving forward.
+- **cursor-wait**: Used to imply that the application is processing and the user should not click again.
+- **cursor-progress**: Used to imply that the application is processing and the user CAN click again.
+
+
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 
@@ -442,9 +476,7 @@ Tells ZSX to scroll to a particular element after completing a zx-swap. This can
 - `"top"` : Scroll to the top of the page
 - `"if-needed"` : Scroll to the element if it is out of view otherwise do not scroll
 
-### Usage
-
-Browsers by default include scrolling to a URL hash fragement identifier. You can use zx-scroll-to for more complex scrolling scenarios like classes, 'top' of page, or 'if-needed'
+### Examples
 
 **Default Browser hash(#) identifier**
 
@@ -499,10 +531,14 @@ Sometimes you want the scroll location to be just above the target element. You 
 <div id="myElement" style="scroll-margin-top: 20px;"></div>
 ```
 
+### Usage Guidelines
+
+Use zx-scroll-to sparingly when necessary to highlight an element that the user must perform in a workflow, or important information that they must see after an action.
+
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 ## zx-swap
-**`#idSelector | .classSelector | tag-selector | list` **
+**`#idSelector | .classSelector | tag-selector | list`**
 
 Swap out content in the current page with content from the response HTML. Specify the CSS selectors to target.
 
@@ -515,8 +551,7 @@ Swap out content in the current page with content from the response HTML. Specif
 - tag: `zx-swap="tag-selector"`
 - Multiple selectors: `zx-swap="#idSelector,.aClassSelector,tag-selector`"
 
-### Usage
-`zx-swap` is the primary feature of ZSX. As a result of every link or form action, you describe which element(s) should be replaced from the response content.
+### Examples
 
 #### Swap #id Target
 
@@ -575,6 +610,11 @@ Swap out the element from the form post content
 </form>
 ```
 
+### Usage Guidelines
+`zx-swap` is the primary feature of ZSX. As a result of every link or form action, you describe which element(s) should be replaced from the response content.
+
+You should liberally use zx-swap throughou the application, but ensure to specify as narrow a target as possible. See [minimizing zx-swap targets](#minimzing-zx-swap-targets)
+
 #### Form Redirects
 
 Forms can either be a GET request or a POST. Typically when a POST, the server should redirect back to a GET (POST-REDIRECT-GET style) so that the browser does not perform duplicate submits.
@@ -595,7 +635,23 @@ Used on tags: `<a>`
 - Single param: `zx-sync-params="foo"`
 - Multiple params: `zx-sync-params="foo,bar"`
 
-### Usage
+### Examples
+
+#### Single Parameter
+
+```html
+<a href="?hello=true" zx-swap="#targetContent" zx-sync-params="hello" >Hello</a>
+<a href="?hello=false" zx-swap="#targetContent" zx-sync-params="hello" >Goodbye</a>
+<a href="?hello=false" zx-swap="#targetContent" >Other Link</a>
+```
+
+#### Multiple Parameters
+
+```html
+<a href="?hello=true&foo=bar" zx-swap="#targetContent" zx-sync-params="hello,foo" >Hello</a>
+```
+
+### Usage Guidelines
 
 You use zx-sync-params when you need to keep URL state synchronized across all links on the page, even when only a small subset of the page content is updated.
 
@@ -612,20 +668,6 @@ The logic performed is as follows:
 
 
 `zx-sync-params` can take a single parameter or multiple parameters.
-
-#### Single Parameter
-
-```html
-<a href="?hello=true" zx-swap="#targetContent" zx-sync-params="hello" >Hello</a>
-<a href="?hello=false" zx-swap="#targetContent" zx-sync-params="hello" >Goodbye</a>
-<a href="?hello=false" zx-swap="#targetContent" >Other Link</a>
-```
-
-#### Multiple Parameters
-
-```html
-<a href="?hello=true&foo=bar" zx-swap="#targetContent" zx-sync-params="hello,foo" >Hello</a>
-```
 
 **Bypassing Link Update**
 
@@ -668,7 +710,16 @@ Fired after the swap for a selector is completed. If the zx-swap contained multi
 * `newElement` Live DOM reference to the new element that was swapped in
 * `selector` The selector that was used to locate the elements
 
-### Usage
+### Examples
+
+```javascript
+// Example resetting bootstrap tooltips and popovers after a swap
+document.addEventListener('zsx.zx-swap.after', function(event) {
+	// Respond to zsx.zx-swap.after event
+})
+```
+
+### Usage Guidelines
 Use the `zsx.zx-swap.after` to process the content after ZSX is finished replacing it. You might use this to re-attach event listeners and state from other libraries or purposes that are lost after the swap.
 
 See Cookbook [Restoring Events and Features After Swap](#restoring-events-and-features-after-swap)
@@ -1003,6 +1054,14 @@ document.addEventListener('zsx.zx-swap.after', function(event) {
 ```
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | [Cookbook](#cookbook) | *next section* → [Common Errors](#common-errors)
+
+# Roadmap
+Features or improvements to be completed
+
+| Feature |
+| --- |
+| Enhance zx-dialog-confirm to work from either buttons or forms
+
 
 # Common Errors
 
