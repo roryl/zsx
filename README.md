@@ -18,9 +18,9 @@ Start with HTML and end with an amazing user experience!
 <a href="/page" zx-swap="body">Click Me</a>
 ```
 
-ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), [Turbo](https://turbo.hotwired.dev/) and [Fixi.js](https://github.com/bigskysoftware/fixi), but with an opinionated featureset.
+ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), and [Turbo](https://turbo.hotwired.dev/). However it has an opinionated featureset for building highly maintainable yet interactive web applications.
 
-[ChartSQL Studio Editor](https://docs.chartsql.com) was the inspiration and first application build with ZSX.
+[ChartSQL Studio Editor](https://docs.chartsql.com) was the the original source of ZSX and funds its development.
 
 ## Table of Contents
 
