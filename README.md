@@ -97,20 +97,23 @@ Include the zsx.js script. It can be in the head or end of the body
 
 # Features
 
-ZSX upgrades links, forms and buttons to make applications more responsive and solve common UX patterns.
+ZSX upgrades standard links, forms and buttons to make server rendered applications more responsive user friendly.
 
-**Page Fragment Updates**:
+There are three categories that ZSX progressively enhances the browser experience: *Page Fragment Updates*, *Enhanced Visual Fidelity*, and *Navigation & State Management*. Together these features allow developers to build slick and sophisticated application experiences with just HTML markup.
+
+**Page Fragment Updates**: *Manage partial updates to the DOM without full page reloads*
+
  - [Swap Client Side Content without Reload](#swap-client-side-content-without-reload) — [`zx-swap`](#zx-swap)
- - [Preserve Client-Side Content During Swaps](#preserve-client-side-content-during-swaps) — [`zx-keep`](#zx-keep)
+ - [Keep Client-Side Content During Swaps](#keep-client-side-content-during-swaps) — [`zx-keep`](#zx-keep)
 
-**Enhanced Visual Fidelity**:
+**Enhanced Visual Fidelity**: *Improve the user's  visual experience*
  - [Page Jump Supression](#page-jump-supression) - [`zx-jump-guard`](#zx-jump-guard)
  - [Visual Loading Indicators](#visual-loading-indicators) — [`zx-loader`](#zx-loader)
  - [Scroll Elements Into View](#scroll-elements-into-view) — [`zx-scroll-to`](#zx-scroll-to)
  - [Action Confirmation Dialogs](#action-confirmation-dialogs) — [`zx-dialog-confim`](#zx-dialog-confirm)
  - [App-Style Links](#app-style-links) — [`zx-link-mode`](#zx-link-mode)
 
-**Navigation and State Management**:
+**Navigation and State Management**: *Maintaining the user's state*
  - [Synchronize URL Parameters Across Links](#synchronize-url-parameters-across-links) — [`zx-sync-params`](#zx-sync-params)
  - [Automatic History Management](#automatic-history-management)
 
@@ -128,9 +131,9 @@ See [`zx-swap`](#zx-swap)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
-## Preserve Client-Side Content During Swaps
+## Keep Client-Side Content During Swaps
 
-When swapping content, preserve dynamic client side media, canvas or content that should not be changed. You can mark which content needs to be maintained and it will be restored across swaps
+When swapping content, keep dynamic elements, javascript, canvas or media content that should not be changed. You can mark which content needs to be maintained and it will be restored across swaps
 
 See [`zx-keep`](#zx-keep-true--false)
 
@@ -138,9 +141,9 @@ See [`zx-keep`](#zx-keep-true--false)
 
 ## Page Jump Supression
 
-ZSX can minimize disruptive page jumps from removed content.
+Minimize disruptive page jumps from removed content.
 
-When elements are removed from the DOM, the page may abruptly jump upward if the combined height of the remaining content and the viewport is less than the current scroll position.
+When elements are removed from the DOM, the page may abruptly jump upward if the combined height of the remaining content and the viewport is less than the current scroll position. ZSX can guard against these jumps.
 
 See [`zx-jump-guard`](#zx-jump-guard)
 
@@ -176,7 +179,7 @@ See [`zx-scroll-to`](#zx-scroll-to)
 
 ## Synchronize URL Parameters Across Links
 
-On link navigation, you can synchronize all links on the page to match particular URL variables of the clicked link. URL syncrhonization allows you to swap small portions of the page, but ensure all other links on the page match the correct parameters.
+On link navigation, you can synchronize all links on the page to match the parameters of the clicked link. URL syncrhonization allows you to swap small portions of the page, but ensure all other links on the page match the correct parameters.
 
 See [`zx-sync-params`](#zx-sync-params)
 
@@ -212,7 +215,8 @@ See [`zx-link-mode`](#zx-link-mode)
 
 # HTML API
 
-ZSX works by adding attributes to your existing HTML markup.
+ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
+
 
 | attribute | Description |
 | --- | --- |
@@ -271,7 +275,7 @@ Enables or disables the use of a spacer element to guard against page jumps when
 - `true`: Activates the spacer to maintain page stability and prevent jumps during content changes.
 - `false`: Deactivates the spacer, allowing the page to adjust naturally, which may result in jumps.
 
-### Example Usage:
+### Examples
 
 #### `<a>` anchor links
 
@@ -317,8 +321,8 @@ Keeps an an element and its descendants unchanged when a parent is swapped out. 
 
 **Values Values:**
 
-- true: Keep the element when swapping out the parent
-- false: Do not keep the element when swapping out the parent
+- `true`: Keep the element when swapping out the parent
+- `false`: Do not keep the element when swapping out the parent
 
 
 ### Examples
@@ -342,7 +346,7 @@ Element with zx-keep requires that an Id be set
 
 ### Usage Guidelines
 
-To perform a zx-keep, ZSX needs to move, swap and restore the elements which is a costly operation. In conjunction with targeted use of zx-swap, use zx-keep on the elements that are necessary to retain.
+To perform a zx-keep, ZSX needs to move, swap and restore the elements, which can be a costly operation. In conjunction with targeted use of zx-swap, use zx-keep on the inner most elements that are necessary to retain.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
@@ -381,7 +385,7 @@ Browsers provide some default features for links like tooltips, right click menu
 
 When `zx-link-mode="app"` the link is just clickable text. You handle all additional styling for the link.
 
-You'll typically want app style links when links wrap more complex context than just a test string, like cards, list items or links styles as buttons.
+You'll typically want app style links when links wrap more complex context than just a test string, like cards, list items or links that are styled as buttons.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
@@ -394,7 +398,7 @@ Adds a visual progress indicator to buttons and links for requests that take tim
 **Used on Tags:** `a`, `button`
 
 **Valid Values:**
-- **true**: Add a loading indicator when clicked
+- **true**: Add the default loading indicator when clicked
 - **false**: Do not add a loading indicator
 - **cursor-wait**: Change the cursor to the browsers default wait cursor
 - **cursor-progress**: Change the cursor to the browsers default progress cursor
@@ -430,7 +434,7 @@ You can override the `.zx-loading-cursor-wait` class if you need to customize th
 
 ```css
 .zx-loading-cursor-wait {
-	cursor: wait !important;;
+	cursor: wait !important;
 }
 ```
 
@@ -447,8 +451,8 @@ Uses the browsers default progress cursor style. Useful for regular links where 
 You can override the `.zx-loading-cursor-progress` class if you need to customize the icon
 
 ```css
-.zx-loading-cursor-wait {
-	cursor: wait !important;;
+.zx-loading-cursor-progress {
+	cursor: progress !important;
 }
 ```
 
@@ -478,7 +482,7 @@ We provide different types of loading styles that serve different UX purposes.
 
 
 ## zx-scroll-to
-**`true | false | top | if-needed | CSS selector`**
+**`true | false | top | CSS selector`**
 
 Tells ZSX to scroll to a particular element after completing a zx-swap. This can improve the user experience when the swapped elements may be out of view or we want to focus the new elements.
 
@@ -490,7 +494,6 @@ Tells ZSX to scroll to a particular element after completing a zx-swap. This can
 - **`#idSelector`**: Scroll to the provided Id, regardless of the zx-swap selectors
 - `.classSelector` : Any valid CSS selector. The first item returned will be the target of the scroll
 - `"top"` : Scroll to the top of the page
-- `"if-needed"` : Scroll to the element if it is out of view otherwise do not scroll
 
 ### Examples
 
@@ -520,9 +523,9 @@ Sometimes as a result of adding a new item to the page, we will want to scroll t
 
 #### Disable Page Change Scrolling
 
-By default, ZSX handles links to different pages (base paths) by scrolling to the top of the page. This matches default browser behavior and user expectations when switching pages.
+By default, ZSX handles links to different pages (base paths) by scrolling to the top of the page. This matches default browser behavior and user expectations when switching pages. In effect, when the base path changes, it is as if you set `zx-scroll-to="top"`.
 
-You can disable this by setting zx-scoll-to="false" on your links that you want to maintain the current scroll position between pages.
+You can change this by setting zx-scoll-to="false" to disable scrolling to top when the base path changes, or any other zx-scroll-to value.
 
 ```html
 <a href="/page1" zx-swap="#targetContainer" zx-scroll-to="false">Hello</a>
@@ -554,7 +557,7 @@ Use zx-scroll-to sparingly when necessary to highlight an element that the user 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 ## zx-swap
-**`#idSelector | .classSelector | tag-selector | list`**
+**`#idSelector | .classSelector | tag-selector | list of CSS selectors`**
 
 Swap out content in the current page with content from the response HTML. Specify the CSS selectors to target.
 
@@ -562,10 +565,10 @@ Swap out content in the current page with content from the response HTML. Specif
 
 **Valid Values:**
 
-- id: `zx-swap="#idSelector"`
-- class: `zx-swap=".aClassSelector"`
-- tag: `zx-swap="tag-selector"`
-- Multiple selectors: `zx-swap="#idSelector,.aClassSelector,tag-selector`"
+- `#id`: An HTML element ID to swap
+- `.class`: A set of class elements to swap
+- `html-tag`: A set of HTML tags to swap
+- `list`: A comma separated list of selectors to swap
 
 ### Examples
 
@@ -627,9 +630,9 @@ Swap out the element from the form post content
 ```
 
 ### Usage Guidelines
-`zx-swap` is the primary feature of ZSX. As a result of every link or form action, you describe which element(s) should be replaced from the response content.
+`zx-swap` is the primary feature of ZSX. As a result of every link or form action, you describe one or more elements that be replaced from the response content.
 
-You should liberally use zx-swap throughou the application, but ensure to specify as narrow a target as possible. See [minimizing zx-swap targets](#minimzing-zx-swap-targets)
+You should liberally use zx-swap throughout the application, but ensure to specify as narrow a target as possible. See [minimizing zx-swap targets](#minimzing-zx-swap-targets)
 
 #### Form Redirects
 
@@ -644,12 +647,12 @@ ZSX will update the URL history to the value of any GET redirect. POST redirects
 
 Synchronizes parameters from an `<a>` link click with other links on the page.
 
-Used on tags: `<a>`
+**Used on tags**: `<a>`
 
 **Valid Values:**
 
-- Single param: `zx-sync-params="foo"`
-- Multiple params: `zx-sync-params="foo,bar"`
+- `param`: A single param to be synchronized with other links
+- `list`: A comma separated list of params to sync with other links
 
 ### Examples
 
@@ -669,7 +672,7 @@ Used on tags: `<a>`
 
 ### Usage Guidelines
 
-You use zx-sync-params when you need to keep URL state synchronized across all links on the page, even when only a small subset of the page content is updated.
+You use `zx-sync-params` when you need to sync all links using the parameter, even when only a small subset of the page content is updated.
 
 This is necessary when URL contains important state that should persist across subsequent clicks, but the content from the zx-swap does not touch all of the links on the page.
 
@@ -679,7 +682,7 @@ The logic performed is as follows:
 - **FOR** each link on the page
 - **FOR** each of the parameters in the clicked `zx-sync-params`
 - **IF** that parameter is in the other link's `href`
-- **THEN** pdate the parameter to the value of the parameter in the clicked link.
+- **THEN** update the parameter to the value of the parameter in the clicked link.
 - **UNLESS** the other link itself contains a `zx-sync-params` with the same parameter name
 
 
@@ -736,7 +739,7 @@ document.addEventListener('zsx.zx-swap.after', function(event) {
 ```
 
 ### Usage Guidelines
-Use the `zsx.zx-swap.after` to process the content after ZSX is finished replacing it. You might use this to re-attach event listeners and state from other libraries or purposes that are lost after the swap.
+Use the `zsx.zx-swap.after` to process the content after ZSX is finished replacing it. You might use this to re-attach event listeners and state from other libraries or purposes.
 
 See Cookbook [Restoring Events and Features After Swap](#restoring-events-and-features-after-swap)
 
@@ -746,9 +749,9 @@ See Cookbook [Restoring Events and Features After Swap](#restoring-events-and-fe
 
 # ZSX Design Goals
 
-ZSX has an opinionated philosophy in regards to web application architecture that dictate it's featureset. Understanding these opinions will help you determine if ZSX is right for your development style.
+ZSX has an opinionated philosophy in regards to web application architecture, these opinions dictate it's featureset. Understanding these opinions will help you determine if ZSX is right for your development style.
 
-ZSX is designed to enhance server rendered applications. It only uses semantic HTML and follows browser semantics. It improves the user experience of server rendered applications without breaking user’s expectations of browser behavior.
+ZSX is designed to enhance server rendered applications. It improves the user experience of server rendered applications without breaking user’s expectations of browser behavior.
 
 We built [ChartSQL Studio](https://docs.chartsql.com) with ZSX and followed these guiding principles:
 
@@ -771,9 +774,9 @@ Use Cases, Development Plans & Alternatives to ZSX
 
 Regardless of how you render the front end of the application, we believe that URLs and HTTP (GET and POST) is broadly the right application architecture.
 
-Web applications should be addressible by URLs (links) and state changes should be communicated to the server with POSTs (forms).
+Web applications should be addressible by URLs (links) and backend state changes should be communicated to the server with POSTs (forms).
 
-Applications should be decomposed into pages (/entity1, /entity2) representing different resources following a generally RESTful style.
+Applications should be decomposed into pages (/entity1, /entity2) representing different resources, following a generally RESTful style.
 
 It follows that HTML, links and forms are the natural way to work with this architecture.
 
@@ -788,9 +791,11 @@ More advanced visual fidelity can be achieved with minor javascript, canvas and 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Web Components Are Not Necessary
-A lot of front end development seeks to "componetize" HTML. "web components" in the general sense is not a new technology, it goes back to the earliest web frameworks like JSP. However, unless you are creating a "component library" for others to use, we do not believe web components aid in development of applications.
+A lot of 'modern' front end development seeks to 'componetize' HTML. In fact 'web components' in the general sense is not a new technology. Some of the earliest web frameworks like JSP were very component-like. However, unless you are creating a "component library" for others to use, we do not believe web components are desirable.
 
-We believe that it is easiest and most maintainable to build web UIs in basic HTML pages.
+Building HTML UIs requires a lot of markup. Componetizing that markup does not lead to significant user improvement or developer ergonomics, in our opinion.
+
+We believe that it is easiest and most maintainable to build web UIs in basic HTML pages that can be read as straight HTML.
 
 ZSX exists to enhance that experience while staying true to the nature of HTML and HTTP.
 
@@ -808,7 +813,7 @@ In a ZSX application, you should be able to look at the rendered HTML and unders
 
 ## Assume Full Page Rendering
 
-In a ZSX application the server by default always fully renders full pages. ZSX provides features to hot swap elements on the page and avoid a full browser page reload.
+In a ZSX application, the server by default always fully renders full pages. ZSX provides features to hot swap elements on the page and avoid a full browser page reload.
 
 Avoiding a full page reload improves performance of the browser. Browser performance is improved because it doesn't need to reflow the entire document. This performance improvement is perceived by the user as more responsive.
 
@@ -818,19 +823,19 @@ Full server renders might seem costly, but it greatly improves the maintainabili
 - Forces developers to think through the first page load experience up front.
 - Dissuades client side hydration which we consider an anti-pattern.
 - "Premature optimization is the root of all evil" - You don't need to spend time optimizing the performance of pages that are seldom used.
-- Caching of pages can be done server-size in a more robust manner
+- Caching of pages can be done server-side in a more robust manner
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Explicit Link and Form Handling
 
-As compared to some similar libraries, ZSX does not automatically override all links or forms, because:
+As compared to some similar libraries, ZSX does not automatically enhance all links or forms, because:
 
 - The application will be most responsive when you swap the smallest amount of content necessary
 - You should be able to inspect the HTML and understand what each link/form behavior is without having to know hidden information
-- You should think through which content exactly needs to be updated from every click or form post.
+- You should think through exactly which content needs to be updated after every click or form post.
 
-Therefore when using ZSX, you explicitly decide for every link/form which content needs to be updated, and which zx-* features to apply.
+Therefore when using ZSX, for every link or form, you explicitly decide which content needs to be updated, and which zx-* features to apply.
 
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
@@ -840,9 +845,9 @@ Therefore when using ZSX, you explicitly decide for every link/form which conten
 A litmus test for web applications with proper UX is “can you hard refresh.” Many applications exhibit poor user experience on hard refresh:
 
 - It takes a long time for the page to load
-- Time to interaction is delayed as client side features are "hydrated"
+- Time to interaction is delayed as client side features are hydrated
 - There may be a lot of flashing and layout thrashing as elements are loaded in
-- States that were clicked through to are lost, and the user is back at some “root” page flow
+- States that were clicked through may be lost
 
 This leads to many lost features native to browsers:
 
@@ -856,7 +861,7 @@ This leads to many lost features native to browsers:
 
 ## When to Use ZSX
 
-If your application fundamentally works with JavaScript turned off, then ZSX is a good candidate to enhance your application.
+Use ZSX for server rendered applications that rely on links, forms and HTML. Often referred to as 'multi-page applications'
 
 If your application is fully SPA, then ZSX is not a good fit.
 
@@ -865,7 +870,7 @@ ZSX is a small library and will work well with other JS libraries.
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Future Development
-ZSX will only add enhancement features that we find solve common tasks in our applications, without breaking fundemental browser architecture. HTML is continually evolving with new features that make browser apps more responsive and user friendly. We are betting on HTML/CSS/HTTP and Server Side Rendering as the engine of applications.
+ZSX will only add enhancement features that we find solve common tasks in our applications, without breaking fundemental browser architecture. The HTML spec is continually evolving with new features that make browser apps more responsive and user friendly. We are betting on HTML/CSS/HTTP and Server Side Rendering as the engine of applications.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
@@ -881,15 +886,15 @@ We explicitly do not like that any element on the page can be an interaction poi
 
 ### Unpoly.js
 
-Unpoly.js is probably the closest philosophically to ZSX. However I consider it’s feature set more complex than I desire. I believe there are only a few necessary conventions that we need. Unpoly drifts away from semantic HTML with features like layers. In comparison, ZSX only enhances fundamental browser behavior.
+Unpoly.js is probably the closest philosophically to ZSX. However we consider it’s feature set more complex than we desire. We believe there are only a few necessary conventions that we need. Unpoly drifts away from semantic HTML with features like layers. In comparison, ZSX only enhances fundamental browser behavior.
 
-Unpoly also has a lot of configurations for targeting different elements, parents, children, appending, prepending and automatically choosing ambiguous cases. I consider these uncessary and an anti-pattern.
+Unpoly also has a lot of configurations for targeting different elements, parents, children, appending, prepending and automatically choosing ambiguous cases. We consider these uncessary.
 
 Instead, with ZSX, you control your HTML, the IDs, and classes you wish to target. This makes it easier to maintain your HTML and understand your content updates. You can always look at the source HTML and know exactly what will happen.
 
 ### Turbo / Hotwire
 
-Turbo is also another strategy to “dramatically reduce the amount of custom JavaScript” but it has different goals. It provides features like ‘Frames’ and ‘Streams’ to add additional architectural options. I believe that Turbo goes beyond what I believe satisfies that [URLs and HTTP is the Right Architecture](#urls-and-http-is-the-right-architecture)
+Turbo is also another strategy to “dramatically reduce the amount of custom JavaScript” but it has different goals. It provides features like ‘Frames’ and ‘Streams’ to add additional architectural options. We believe that Turbo goes too far beyond the idea that [URLs and HTTP is the Right Architecture](#urls-and-http-is-the-right-architecture)
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
@@ -897,11 +902,16 @@ Turbo is also another strategy to “dramatically reduce the amount of custom Ja
 
 Additional architectural tips and tricks for building maintainable and interactive web applications with ZSX
 
+- [Start with the Raw HTML](#start-with-the-raw-html)
 - [Understanding Application State](#understanding-application-state)
 - [User Interactions](#user-interactions)
 - [Using Loading Indicators](#using-loading-indicators)
 - [Using Animations](#using-animations)
 - [Performance Optimization](#ui-performance-optimization)
+
+## Start With The Raw HTML
+
+When building your application, start with your HTML, Links and FORMs without any zx-* attributes. Get your basic workflows and content correct. When you are confident in the features, then enhance the UX by adding in `zx-swap`, `zx-loader`, `zx-dialog-confirm` and others to improve the slickness of your application.
 
 
 ## Understanding Application State
@@ -920,7 +930,7 @@ Use when the UI state must survive browser sessions or application restarts, you
 
 ### Server Session
 
-Use when the UI state must not be shareable, does not need to be permenantly persisteted, but must survive page refreshes. Mutating session state requires interacting with the server. Your server will maintain the session variables and render them into HTML. With session state, all open tabs for one browser instance will have the same state.
+Use when the UI state must not be shareable, does not need to be permenantly persisteted, but must survive page refreshes, you use Server Sessions. Mutating session state requires interacting with the server. Your server will maintain the session variables and render them into HTML. With session state, all open tabs for one browser instance will have the same state.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
@@ -932,13 +942,13 @@ Use when the UI state can be shareable, disclosable, and survive refreshes. The 
 
 ### Cookies
 
-Use when the UI state must not be shareable across users or browsers, and can be set by the client without posting to the server, but the cookies will be shared with the server. Cookies allow bi-directional synchronization of state with the browser and server. The server can use the cookies to control rendering output, and the client can also set the cookies (whereas the browser cannot set session data without a request to the server)
+Use when the UI state must not be shareable across users or browsers, and can be set by the client without posting to the server, use cookies. Cookies allow bi-directional synchronization of state with the browser and server. The server can use the cookies to control rendering output, and the client can also set the cookies (whereas the browser cannot set session data without a request to the server)
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
 ### localStorage
 
-Use when the UI state must not be shareable, and does not or must not be shared with the server for rendering. The client can set and restore values on page load into localStorage
+Use when the UI state must not be shareable, and does not or must not be shared with the server for rendering. The client can set and restore values on page load into localStorage.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
@@ -952,11 +962,11 @@ State which is stored in JavaScript runtime variables or set into HTML attribute
 
 Links and Forms are the bedrock of HTML and HTTP interaction through a browser. Links (&lt;a href&gt;) represent GET requests and Forms (&lt;form&gt;) represent POST requests.
 
-Links and Forms are all that is truly required to create high fidelity browser applications.
-
 You should build your application interaction elements entirely out of links and forms wherever possible. This is the most maintainable, accessible and straightforward way to build on the web.
 
 ZSX enhances links and forms by providing features to control how to render the response content. It is the same response content that would have rendered had JS been turned off. But with ZSX, you can speed up your responsiveness of links and forms.
+
+Minor interactions like hover states, tooltips and alerts can be entiely client side.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
