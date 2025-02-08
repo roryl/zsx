@@ -1,4 +1,6 @@
-![alt text](docs/img/mascot-small.fw.png)
+<!-- ![alt text](docs/img/mascot-small.fw.png) -->
+
+<img src="docs/img/mascot-small.fw.png" style="float:right;">
 
 # ZSX.js
 
