@@ -1,8 +1,9 @@
 <!-- ![alt text](docs/img/mascot-small.fw.png) -->
 
-<img src="docs/img/mascot-small.fw.png" align="right">
 
 # ZSX.js
+
+<img src="docs/img/mascot-small.fw.png" align="right">
 
 Build a ***Zero JavaScript*** **User Experience** ;)
 
