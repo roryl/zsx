@@ -1,9 +1,10 @@
+![alt text](docs/img/mascot-small.fw.png)
+
 # ZSX.js
 
 Build a ***Zero JavaScript*** **User Experience** ;)
 
 ZSX is a dependency free progressive enhancement library for server-rendered web applications. ZSX uses only semantic HTML, CSS, URLs, links, forms, and buttons to improve the user experience.
-
 
 
 ```html
