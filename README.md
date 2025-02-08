@@ -7,7 +7,9 @@
 
 Build a ***Zero JavaScript*** **User Experience** ;)
 
-ZSX is a dependency free progressive enhancement library for server-rendered web applications. ZSX uses only semantic HTML, CSS, URLs, links, forms, and buttons to improve the user experience.
+ZSX is a dependency free progressive enhancement library for server-rendered web applications. 
+
+ZSX uses only semantic HTML, CSS, URLs, links, forms, and buttons to improve the user experience.
 
 <br />
 <br />
