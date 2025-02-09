@@ -137,6 +137,8 @@ Dynamically update parts of your page by swapping elements based on their ID, cl
 
 The content swap feature allows you to update portions of your page without a full page reload, enhancing performance and user experience.
 
+![alt text](docs/img/examples/zxswap.gif)
+
 See [`zx-swap`](#zx-swap)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)

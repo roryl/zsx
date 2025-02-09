@@ -1012,6 +1012,14 @@ class ZsxJs {
 
 			var zxTrigger = this._normalizeZxTrigger(triggerAnchorElement, null);
 
+			if(shouldPushHistory){
+				window.history.pushState({
+					uri: uri,
+					swapSelectors: swapSelectors,
+					zeroSyncParams: zeroSyncParams
+				}, '', uri);
+			}
+
 			this._parseResponseAndSwapSelectors(dom, content, swapSelectors, zxTrigger);
 
 			// When we are restoring from history we do not want to trigger the scroll
@@ -1026,12 +1034,6 @@ class ZsxJs {
 
 			//Add the uri to the history
 			if(shouldPushHistory){
-				window.history.pushState({
-					uri: uri,
-					swapSelectors: swapSelectors,
-					zeroSyncParams: zeroSyncParams
-				}, '', uri);
-
 				this._stopLoader(triggerAnchorElement);
 			}
 
