@@ -107,9 +107,9 @@ Include the zsx.js script. It can be in the head or end of the body
 
 # Features
 
-ZSX upgrades standard links, forms and buttons to make server rendered applications more responsive user friendly.
+ZSX upgrades links, forms and buttons to make server rendered applications more responsive and user friendly.
 
-There are three categories that ZSX progressively enhances the browser experience: *Page Fragment Updates*, *Enhanced Visual Fidelity*, and *Navigation & State Management*. Together these features allow developers to build slick and sophisticated application experiences with just HTML markup.
+There are three areas of improvement that ZSX adds to browsers: *Page Fragment Updates*, *Enhanced Visual Fidelity*, and *Navigation & State Management*. Together these features allow developers to build slick and sophisticated application experiences with just HTML markup.
 
 **Page Fragment Updates**: *Manage partial updates to the DOM without full page reloads*
 
