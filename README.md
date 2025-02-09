@@ -20,7 +20,8 @@ Start with HTML and end with an amazing user experience!
 
 ![alt text](docs/img/examples/zxswap.gif)
 
-ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), and [Turbo](https://turbo.hotwired.dev/). However it has an opinionated featureset for building highly maintainable yet interactive web applications.
+ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), and [Turbo](https://turbo.hotwired.dev/). However it has an opinionated featureset for building highly maintainable yet interactive web applications. ZSX is more like a toolbox of HTML/HTTP enhancements, rather than a reinvention of browser features in javascript.
+
 
 [ChartSQL Studio Editor](https://docs.chartsql.com) was the the original source of ZSX and funds its development.
 
@@ -33,6 +34,7 @@ ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to fram
 - [ZSX Design Goals](#zsx-design-goals)
 - [Developing Applications](#developing-applications)
 - [Cookbook](#cookbook)
+- [Common Issues](#common-issues)
 - [Roadmap](#roadmap)
 
 # Quick Start
@@ -139,9 +141,10 @@ Dynamically update parts of your page by swapping elements based on their ID, cl
 
 The content swap feature allows you to update portions of your page without a full page reload, enhancing performance and user experience.
 
+See [`zx-swap`](#zx-swap)
+
 ![alt text](docs/img/examples/zxswap.gif)
 
-See [`zx-swap`](#zx-swap)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
@@ -149,9 +152,9 @@ See [`zx-swap`](#zx-swap)
 
 When swapping content, keep dynamic elements, javascript, canvas or media content that should not be changed. You can mark which content needs to be maintained and it will be restored across swaps.
 
-![alt text](docs/img/examples/zxkeep.gif)
-
 See [`zx-keep`](#zx-keep-true--false)
+
+![alt text](docs/img/examples/zxkeep.gif)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
@@ -809,6 +812,14 @@ See Cookbook [Restoring Events and Features After Swap](#restoring-events-and-fe
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [ZSX Design Goals](#zsx-design-goals)
 
+# CSS Referance
+The following CSS classes are created by zsx.css for the visual features. You can override these style classes if needed.
+
+| CSS | Purpose |
+| --- | --- |
+| .zx-link-app | Added to links that have `zx-link=mode="app"` to add default pointer styles.
+|.zx-loading-cursor-wait | The cursor style applied when `zx-loader="cursor-wait"` is used
+|.zx-loading-cursor-progress | The cursor style applied when `zx-loader="cursor-progress"` is used
 
 # ZSX Design Goals
 
@@ -1147,7 +1158,7 @@ Features or improvements to be completed
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | [Cookbook](#cookbook) | [Roadmap](#roadmap) | *next section* → [Common Errors](#common-errors)
 
-# Common Errors
+# Common Issues
 
 The following are common errors that ZSX will throw when misusing features
 
@@ -1155,18 +1166,6 @@ The following are common errors that ZSX will throw when misusing features
 
 When your zx-swap directive results in multiple elements, each element needs a unique id in order to be able to determine which content area is which
 
-## ZSX: target is not an anchor or form element
+# Contributing
 
-# Alternatives
-
-[https://github.com/alexpetros/triptych](https://github.com/alexpetros/triptych)
-
-[https://github.com/bigskysoftware/fixi](https://github.com/bigskysoftware/fixi)
-
-[https://leanrada.com/htmz/](https://leanrada.com/htmz/)
-
-[https://twinspark.js.org/](https://twinspark.js.org/)
-
-Swapping Algorithims
-
-[https://github.com/bigskysoftware/idiomorph](https://github.com/bigskysoftware/idiomorph)
+We are not currently taking contributions
