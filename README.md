@@ -31,6 +31,7 @@ ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to fram
 - [Features](#features)
 - [HTML API](#html-api)
 - [Events API](#events)
+- [CSS Reference](#css-referance)
 - [ZSX Design Goals](#zsx-design-goals)
 - [Developing Applications](#developing-applications)
 - [Cookbook](#cookbook)
