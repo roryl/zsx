@@ -15,8 +15,10 @@ Start with HTML and end with an amazing user experience!
 
 ```html
 <!-- Swap out the element from the response of a link click into the page -->
-<a href="/page" zx-swap="body">Click Me</a>
+<a href="./zxswap.html?message=hello" zx-swap="#targetContent">Say Hello</a>
 ```
+
+![alt text](docs/img/examples/zxswap.gif)
 
 ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), and [Turbo](https://turbo.hotwired.dev/). However it has an opinionated featureset for building highly maintainable yet interactive web applications.
 
@@ -145,7 +147,9 @@ See [`zx-swap`](#zx-swap)
 
 ## Keep Client-Side Content During Swaps
 
-When swapping content, keep dynamic elements, javascript, canvas or media content that should not be changed. You can mark which content needs to be maintained and it will be restored across swaps
+When swapping content, keep dynamic elements, javascript, canvas or media content that should not be changed. You can mark which content needs to be maintained and it will be restored across swaps.
+
+![alt text](docs/img/examples/zxkeep.gif)
 
 See [`zx-keep`](#zx-keep-true--false)
 
