@@ -548,7 +548,12 @@ class ZsxJs {
 			zeroViewportSpacer.style.minHeight = currentMinHeight + 'px';
 		}
 
-		oldElement.outerHTML = newElement.outerHTML;
+		// Get the attributes of the oldElement
+		var oldElementAttributes = oldElement.attributes;
+		var newElementAttributes = newElement.attributes;
+
+		// oldElement.outerHTML = newElement.outerHTML;
+		oldElement.innerHTML = newElement.innerHTML;
 
 		var finalNewElement = theDom.querySelector(selector);
 
@@ -557,12 +562,40 @@ class ZsxJs {
 			throw new Error('ZsxJs: finalNewElement is null');
 		}
 
-		this._setupDialog(finalNewElement);
-		this._setupSwap(finalNewElement);
+		// Now we are going to copy the attributes from the newElement to the oldElement
+		for (var i = 0; i < newElementAttributes.length; i++) {
+			var attr = newElementAttributes[i];
+			oldElement.setAttribute(attr.name, attr.value);
+		}
+
+		//Any attributes that were on the oldElement but not on the newElement need to be removed
+		for (var i = 0; i < oldElementAttributes.length; i++) {
+			var attr = oldElementAttributes[i];
+			var newElementAttr = finalNewElement.getAttribute(attr.name);
+			if(newElementAttr === null){
+				oldElement.removeAttribute(attr.name);
+			}
+		}
+
+		// For all child elements of finalNewElement, we need to setup again
+		// the dialog and swap
+		for(var i = 0; i < finalNewElement.children.length; i++){
+			var childElement = finalNewElement.children[i];
+			this._setupDialog(childElement);
+			this._setupSwap(childElement);
+		}
+
+		// this._setupDialog(finalNewElement);
+		// this._setupSwap(finalNewElement);
 
 		//Execute any inline scripts within the doc
 		var scripts = finalNewElement.getElementsByTagName('script');
 		for (var i = 0; i < scripts.length; i++) {
+
+			//If the tag contains zx-script-skip then we are going to skip it
+			if(scripts[i].hasAttribute('zx-script-skip') && scripts[i].getAttribute('zx-script-skip') === 'true'){
+				continue;
+			}
 
 			var newScript = document.createElement('script');
 

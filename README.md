@@ -48,19 +48,22 @@ Include the zsx.js script. It can be in the head or end of the body
 
 ```html
 <body>
-	<!-- ... Content ... -->
+	<!-- ... You can also include the script in the body -->
 	<script src="dist/zsx.js"></script>
 </body>
 ```
 ## Initialization
 
 ```html
-<script>
-	let zsxjs = new ZsxJs();
-	zsxjs.init(document, {
-		/* options */
-	});
-</script>
+<body>
+	<!-- set zx-script-skip="true" so that body swaps do not execute this again -->
+	<script zx-script-skip="true">
+		let zsxjs = new ZsxJs();
+		zsxjs.init(document, {
+			/* options */
+		});
+	</script>
+</body>
 ```
 
 ↑ [top](#zsxjs)
@@ -90,7 +93,7 @@ Include the zsx.js script. It can be in the head or end of the body
 				Goodbye World
 			{{/if}}
 		</div>
-		<script>
+		<script zx-script-skip="true">
 			let zsxjs = new ZsxJs();
 			zsxjs.init(document, {
 				/* options */
@@ -232,6 +235,7 @@ ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
 | [zx-keep](#zx-keep) | Keeps specified content in the DOM after a parent element is swapped  |
 | [zx-link-mode](#zx-link-mode) | Whether to render the link as a browser (default) link or an application clickable element |
 | [zx-loader](#zx-loader) | Specify that the link or button should have a loading indicator |
+| [zx-script-skip](#zx-script-skip) | Whether to ignore executing a script tag during a swap |
 | [zx-scroll-to](#zx-scroll-to) | Where to sroll to after the content swap |
 | [zx-swap](#zx-swap) | Swaps target selector content from the response of a link click or form post |
 | [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links |
@@ -487,6 +491,36 @@ We provide different types of loading styles that serve different UX purposes.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
+## zx-script-skip
+
+**`true | false`**
+
+Tells ZSX to skip executing an inline `<script>` tag received in the response
+
+**Used on Tags:** `<a>`, `<button>`
+
+**Valid Values:**
+
+- `true`: Skip executing the `<script>` tag
+- `false`: Executes the script tag, this is the same as not existing
+
+### Examples
+
+```html
+<body>
+	<a href="/" zx-swap="body">Update!</a>
+	Content {{now}}
+	<script zx-script-skip="true">
+		//Execute only on initial page load
+	</script>
+</body>
+```
+
+### Usage Guidelines
+
+Uze `zx-script-skip` when you want to specify that a script should not be executed after performing a `zx-swap`. This is necessary in cases when the javascript should only have been executed on initial page load. For example setting up global libraries, like zsx.
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 ## zx-scroll-to
 **`true | false | top | CSS selector`**
@@ -566,7 +600,7 @@ Use zx-scroll-to sparingly when necessary to highlight an element that the user 
 ## zx-swap
 **`#idSelector | .classSelector | tag-selector | list of CSS selectors`**
 
-Swap out content in the current page with content from the response HTML. Specify the CSS selectors to target.
+Swap out content in the current page with content from the response HTML.Specify the CSS selectors to target.
 
 **Used on tags:** `<a>`, `<form>`
 
@@ -640,6 +674,22 @@ Swap out the element from the form post content
 `zx-swap` is the primary feature of ZSX. As a result of every link or form action, you describe one or more elements that be replaced from the response content.
 
 You should liberally use zx-swap throughout the application, but ensure to specify as narrow a target as possible. See [minimizing zx-swap targets](#minimzing-zx-swap-targets)
+
+#### Swap Behavior
+`zx-swap` swaps the innerHTML of the target and merges the attributes. This will preserve event handlers and references on the old element, but any child event handlers will not be preserved.
+
+***Reattach event handlers using `zsx-zx-swap-after` event***
+
+Listen for the zx-swap event and reattach the event handlers manually for any children after the swap is complete. See [`zsx-zx-swap.after`](#zsxzx-swapafter)
+
+```html
+<a href="/" zx-swap="#innerContent">Click</a>
+<div id="containerWithEventHandlers">
+	<div id="innerContent">
+		content
+	</div>
+</div>
+```
 
 #### Form Redirects
 
