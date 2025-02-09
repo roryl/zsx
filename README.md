@@ -20,10 +20,10 @@ Start with HTML and end with an amazing user experience!
 
 ![alt text](docs/img/examples/zxswap.gif)
 
-ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), and [Turbo](https://turbo.hotwired.dev/). However it has an opinionated featureset for building highly maintainable yet interactive web applications. ZSX is more like a toolbox of HTML/HTTP enhancements, rather than a reinvention of browser features in javascript.
+ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), and [Turbo](https://turbo.hotwired.dev/). However, it has an opinionated feature set for building highly maintainable yet interactive web applications. ZSX is more like a toolbox of HTML/HTTP enhancements, rather than a reinvention of browser features in javascript.
 
 
-[ChartSQL Studio Editor](https://docs.chartsql.com) was the the original source of ZSX and funds its development.
+[ChartSQL Studio Editor](https://docs.chartsql.com) was the original source of ZSX and funds its development.
 
 ## Table of Contents
 
@@ -31,7 +31,7 @@ ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to fram
 - [Features](#features)
 - [HTML API](#html-api)
 - [Events API](#events)
-- [CSS Reference](#css-referance)
+- [CSS Reference](#css-reference)
 - [ZSX Design Goals](#zsx-design-goals)
 - [Developing Applications](#developing-applications)
 - [Cookbook](#cookbook)
@@ -114,7 +114,7 @@ Include the zsx.js script. It can be in the head or end of the body
 
 ZSX upgrades links, forms and buttons to make server rendered applications more responsive and user friendly.
 
-There are three areas of improvement that ZSX adds to browsers: *Page Fragment Updates*, *Enhanced Visual Fidelity*, and *Navigation & State Management*. Together these features allow developers to build slick and sophisticated application experiences with just HTML markup.
+ZSX adds improvements across three areas: *Page Fragment Updates*, *Enhanced Visual Fidelity*, and *Navigation & State Management*. Together these features allow developers to build slick and sophisticated application experiences with just HTML markup.
 
 **Page Fragment Updates**: *Manage partial updates to the DOM without full page reloads*
 
@@ -122,10 +122,10 @@ There are three areas of improvement that ZSX adds to browsers: *Page Fragment U
  - [Keep Client-Side Content During Swaps](#keep-client-side-content-during-swaps) — [`zx-keep`](#zx-keep)
 
 **Enhanced Visual Fidelity**: *Improve the user's  visual experience*
- - [Page Jump Supression](#page-jump-supression) - [`zx-jump-guard`](#zx-jump-guard)
+ - [Page Jump Supression](#page-jump-suppression) - [`zx-jump-guard`](#zx-jump-guard)
  - [Visual Loading Indicators](#visual-loading-indicators) — [`zx-loader`](#zx-loader)
  - [Scroll Elements Into View](#scroll-elements-into-view) — [`zx-scroll-to`](#zx-scroll-to)
- - [Action Confirmation Dialogs](#action-confirmation-dialogs) — [`zx-dialog-confim`](#zx-dialog-confirm)
+ - [Action Confirmation Dialogs](#action-confirmation-dialogs) — [`zx-dialog-confirm`](#zx-dialog-confirm)
  - [App-Style Links](#app-style-links) — [`zx-link-mode`](#zx-link-mode)
 
 **Navigation and State Management**: *Maintaining the user's state*
@@ -159,7 +159,7 @@ See [`zx-keep`](#zx-keep-true--false)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
-## Page Jump Supression
+## Page Jump Suppression
 
 Minimize disruptive page jumps from removed content.
 
@@ -207,7 +207,7 @@ See [`zx-sync-params`](#zx-sync-params)
 
 ## Automatic History Management
 
-All links and forms (that redirect to GET) update the browser history and allow the user to navigate back to previous URLs.
+All links and forms that redirect to GET update the browser history and allow the user to navigate back to previous URLs.
 
 ***This feature is automatic and does not require any zx-attributes***
 
@@ -240,7 +240,7 @@ ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
 
 | attribute | Description |
 | --- | --- |
-| [zx-dialog-confirm](#zx-dialog-confirm) | Confirmation question before proceeding wtih the click |
+| [zx-dialog-confirm](#zx-dialog-confirm) | Confirmation question before proceeding with the click |
 | [zx-jump-guard](#zx-jump-guard) | Guards against page jumps from removed content
 | [zx-keep](#zx-keep) | Keeps specified content in the DOM after a parent element is swapped  |
 | [zx-link-mode](#zx-link-mode) | Whether to render the link as a browser (default) link or an application clickable element |
@@ -280,7 +280,7 @@ There are additional attributes you can add to control the content:
 ```
 
 ### Usage Guidelines
-You should ask user for confirmation of actions that are sensitive and cannot be easily undone, or that has side effects. For example, deleting a record which cannot be recovered. Typically this will be used on form buttons (because links/GET should not make permanent changes).
+You should ask users for confirmation of actions that are sensitive, cannot be easily undone, or have side effects. For example, deleting a record which cannot be recovered. Typically this will be used on form buttons (because links/GET should not make permanent changes).
 
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
@@ -811,9 +811,9 @@ Use the `zsx.zx-swap.after` to process the content after ZSX is finished replaci
 See Cookbook [Restoring Events and Features After Swap](#restoring-events-and-features-after-swap)
 
 
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [CSS Reference](#css-referance)
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [CSS Reference](#css-reference)
 
-# CSS Referance
+# CSS Reference
 The following CSS classes are created by zsx.css for the visual features. You can override these style classes if needed.
 
 | CSS | Purpose |
@@ -844,7 +844,7 @@ We built [ChartSQL Studio](https://docs.chartsql.com) with ZSX and followed thes
 Use Cases, Development Plans & Alternatives to ZSX
  - [When to Use ZSX](#when-to-use-zsxjs)
  - [Future Development](#future-development)
- - [Altenratives](#alternatives)
+ - [Alternatives](#alternatives)
 
 
 ## URLs and HTTP is the Right Architecture
@@ -882,7 +882,7 @@ ZSX exists to enhance that experience while staying true to the nature of HTML a
 
 ZSX takes an minimalist approach to JavaScript. While some JS is necessary, we think JS heavy applications are not good UX.
 
-We believe the best UX is based on fundamental HTML/HTTP, links and forms, and that “JS first frontends” are overly complex applications that are hard to maintain.
+We believe the best UX is based on fundamental HTML/HTTP, links and forms, and that “JavaScript-first frontends” are overly complex applications that are hard to maintain.
 
 In a ZSX application, you should be able to look at the rendered HTML and understand exactly the interaction with the backend just by following the links and forms.
 
@@ -947,7 +947,7 @@ ZSX is a small library and will work well with other JS libraries.
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Future Development
-ZSX will only add enhancement features that we find solve common tasks in our applications, without breaking fundemental browser architecture. The HTML spec is continually evolving with new features that make browser apps more responsive and user friendly. We are betting on HTML/CSS/HTTP and Server Side Rendering as the engine of applications.
+ZSX will only add enhancement features that we find solve common tasks in our applications, without breaking fundemental browser architecture. The HTML specification is continually evolving with new features that make browser apps more responsive and user-friendly. We are betting on HTML/CSS/HTTP and Server Side Rendering as the core of applications.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
@@ -967,7 +967,7 @@ Unpoly.js is probably the closest philosophically to ZSX. However we consider it
 
 Unpoly also has a lot of configurations for targeting different elements, parents, children, appending, prepending and automatically choosing ambiguous cases. We consider these uncessary.
 
-Instead, with ZSX, you control your HTML, the IDs, and classes you wish to target. This makes it easier to maintain your HTML and understand your content updates. You can always look at the source HTML and know exactly what will happen.
+Instead, with ZSX, you control your HTML, the IDs, and classes you wish to target. This makes it easier to maintain your HTML and understand your content updates. You can always inspect the source HTML to understand precisely what will happen.
 
 ### Turbo / Hotwire
 
@@ -1007,7 +1007,7 @@ Use when the UI state must survive browser sessions or application restarts, you
 
 ### Server Session
 
-Use when the UI state must not be shareable, does not need to be permenantly persisteted, but must survive page refreshes, you use Server Sessions. Mutating session state requires interacting with the server. Your server will maintain the session variables and render them into HTML. With session state, all open tabs for one browser instance will have the same state.
+Use when the UI state must not be shareable, does not need to be permenantly persisteted, but must survive page refreshes, you use Server Sessions. Mutating session state requires interacting with the server. Your server will maintain the session variables and render them into HTML. With session state, all open tabs for a single browser instance will share the same state.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
@@ -1159,7 +1159,7 @@ Features or improvements to be completed
 | --- |
 | Enhance zx-dialog-confirm to work from either buttons or forms
 
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | [Cookbook](#cookbook) | [Roadmap](#roadmap) | *next section* → [Common Errors](#common-errors)
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | [Cookbook](#cookbook) | [Roadmap](#roadmap) | *next section* → [Common Issues](#common-issues)
 
 # Common Issues
 
