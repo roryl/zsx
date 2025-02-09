@@ -810,7 +810,7 @@ Use the `zsx.zx-swap.after` to process the content after ZSX is finished replaci
 See Cookbook [Restoring Events and Features After Swap](#restoring-events-and-features-after-swap)
 
 
-↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [ZSX Design Goals](#zsx-design-goals)
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [CSS Reference](#css-referance)
 
 # CSS Referance
 The following CSS classes are created by zsx.css for the visual features. You can override these style classes if needed.
@@ -820,6 +820,8 @@ The following CSS classes are created by zsx.css for the visual features. You ca
 | .zx-link-app | Added to links that have `zx-link=mode="app"` to add default pointer styles.
 |.zx-loading-cursor-wait | The cursor style applied when `zx-loader="cursor-wait"` is used
 |.zx-loading-cursor-progress | The cursor style applied when `zx-loader="cursor-progress"` is used
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | *next section* → [ZSX Design Goals](#zsx-design-goals)
 
 # ZSX Design Goals
 
@@ -1168,4 +1170,4 @@ When your zx-swap directive results in multiple elements, each element needs a u
 
 # Contributing
 
-We are not currently taking contributions
+We are not currently taking other contributors but you can open issues and we will address them.
