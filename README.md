@@ -20,7 +20,7 @@ Start with HTML and end with an amazing user experience!
 
 ![alt text](docs/img/examples/zxswap.gif)
 
-ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), and [Turbo](https://turbo.hotwired.dev/). However, it has an opinionated feature set for building highly maintainable yet interactive web applications. ZSX is more like a toolbox of HTML/HTTP enhancements, rather than a reinvention of browser features in javascript.
+ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to frameworks like [HTMX](https://htmx.org/), [Twinspark](https://twinspark.js.org/), and [Turbo](https://turbo.hotwired.dev/). However, it has an opinionated feature set for building highly maintainable yet interactive web applications. ZSX is more like a toolbox of HTML/HTTP enhancements, rather than a client side framework.
 
 
 [ChartSQL Studio Editor](https://docs.chartsql.com) was the original source of ZSX and funds its development.
@@ -40,7 +40,7 @@ ZSX is spiritually closest to [Unpoly](https://unpoly.com/), and similar to fram
 
 # Quick Start
 
-Include the zsx.js script. It can be in the head or end of the body
+Include the zsx.js script. It can be in the head or end of the body. There is `zsx.css` which contains styles and animations for visual elements like `zx-loader`.
 
 ## Installation
 ```html
@@ -114,14 +114,14 @@ Include the zsx.js script. It can be in the head or end of the body
 
 ZSX upgrades links, forms and buttons to make server rendered applications more responsive and user friendly.
 
-ZSX adds improvements across three areas: *Page Fragment Updates*, *Enhanced Visual Fidelity*, and *Navigation & State Management*. Together these features allow developers to build slick and sophisticated application experiences with just HTML markup.
+ZSX adds improvements across three areas: *Page Fragment Updates*, *Enhanced Interactivity*, and *Navigation & State Management*. Together these features allow developers to build slick and sophisticated application experiences with just HTML markup.
 
 **Page Fragment Updates**: *Manage partial updates to the DOM without full page reloads*
 
  - [Swap Client Side Content without Reload](#swap-client-side-content-without-reload) — [`zx-swap`](#zx-swap)
  - [Keep Client-Side Content During Swaps](#keep-client-side-content-during-swaps) — [`zx-keep`](#zx-keep)
 
-**Enhanced Visual Fidelity**: *Improve the user's  visual experience*
+**Enhanced Interactivity**: *Improve the user's  visual experience*
  - [Page Jump Supression](#page-jump-suppression) - [`zx-jump-guard`](#zx-jump-guard)
  - [Visual Loading Indicators](#visual-loading-indicators) — [`zx-loader`](#zx-loader)
  - [Scroll Elements Into View](#scroll-elements-into-view) — [`zx-scroll-to`](#zx-scroll-to)
