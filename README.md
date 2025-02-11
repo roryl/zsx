@@ -114,14 +114,14 @@ Include the zsx.js script. It can be in the head or end of the body. There is `z
 
 ZSX upgrades links, forms and buttons to make server rendered applications more responsive and user friendly.
 
-ZSX adds improvements across three areas: *Page Fragment Updates*, *Enhanced Interactivity*, and *Navigation & State Management*. Together these features allow developers to build slick and sophisticated application experiences with just HTML markup.
+ZSX adds improvements across three areas: *Page Fragment Updates*, *Enhanced Interactivity*, and *Navigation & State Management*. Together these features allow developers to build slick server rendered applications with HTML markup.
 
-**Page Fragment Updates**: *Manage partial updates to the DOM without full page reloads*
+**Page Fragment Updates**: *Updating the DOM without full page reloads*
 
  - [Swap Client Side Content without Reload](#swap-client-side-content-without-reload) — [`zx-swap`](#zx-swap)
  - [Keep Client-Side Content During Swaps](#keep-client-side-content-during-swaps) — [`zx-keep`](#zx-keep)
 
-**Enhanced Interactivity**: *Improve the user's  visual experience*
+**Enhanced Interactivity**: *Improving the user's visual experience*
  - [Page Jump Supression](#page-jump-suppression) - [`zx-jump-guard`](#zx-jump-guard)
  - [Visual Loading Indicators](#visual-loading-indicators) — [`zx-loader`](#zx-loader)
  - [Scroll Elements Into View](#scroll-elements-into-view) — [`zx-scroll-to`](#zx-scroll-to)
@@ -138,7 +138,7 @@ ZSX adds improvements across three areas: *Page Fragment Updates*, *Enhanced Int
 
 ## Swap Client Side Content without Reload
 
-Dynamically update parts of your page by swapping elements based on their ID, class, or tag in response to link clicks or form submissions.
+Dynamically update parts of the page by swapping elements based on their ID, class, or tag in response to link clicks or form submissions.
 
 The content swap feature allows you to update portions of your page without a full page reload, enhancing performance and user experience.
 
@@ -151,7 +151,7 @@ See [`zx-swap`](#zx-swap)
 
 ## Keep Client-Side Content During Swaps
 
-When swapping content, keep dynamic elements, javascript, canvas or media content that should not be changed. You can mark which content needs to be maintained and it will be restored across swaps.
+When swapping content, keep client side elements, javascript, canvas, or media content that should not be changed. You can mark which child elements need to be maintained.
 
 See [`zx-keep`](#zx-keep-true--false)
 
@@ -199,7 +199,9 @@ See [`zx-scroll-to`](#zx-scroll-to)
 
 ## Synchronize URL Parameters Across Links
 
-On link navigation, you can synchronize all links on the page to match the parameters of the clicked link. URL syncrhonization allows you to swap small portions of the page, but ensure all other links on the page match the correct parameters.
+Synchronize all links on the page to match the parameters of the clicked link.
+
+URL syncrhonization allows you to swap small portions of the page, but ensure all other links on the page match the correct parameters.
 
 See [`zx-sync-params`](#zx-sync-params)
 
@@ -248,7 +250,7 @@ ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
 | [zx-script-skip](#zx-script-skip) | Whether to ignore executing a script tag during a swap |
 | [zx-scroll-to](#zx-scroll-to) | Where to sroll to after the content swap |
 | [zx-swap](#zx-swap) | Swaps target selector content from the response of a link click or form post |
-| [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links |
+| [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links after a click |
 
 ## zx-dialog-confirm
 **`string`**
@@ -261,7 +263,7 @@ Generates a confirmation dialog modal to confirm the action before proceeding wi
 
 There are additional attributes you can add to control the content:
 
-- **zx-dialog-confirm-title**: Sets a title for the dialog
+- **zx-dialog-confirm-title**: Sets a title for the dialog (defaults to 'Confirm')
 - **zx-dialog-confirm-yes**: The text of the yes/ok button
 - **zx-dialog-confirm-no**: The text of the no/cancel button
 
@@ -369,6 +371,12 @@ Element with zx-keep requires that an Id be set
 
 To perform a zx-keep, ZSX needs to move, swap and restore the elements, which can be a costly operation. In conjunction with targeted use of zx-swap, use zx-keep on the inner most elements that are necessary to retain.
 
+#### Limitations
+
+**`<iframe>`**
+
+Moving and restoring iframe element with zx-keep does not work. The iframe will be reloaded when it is restored into the DOM.
+
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
 
@@ -416,7 +424,7 @@ You'll typically want app style links when links wrap more complex context than 
 
 Adds a visual progress indicator to buttons and links for requests that take time to complete.
 
-**Used on Tags:** `a`, `button`
+**Used on Tags:** `<a>`, `<button>`
 
 **Valid Values:**
 - **true**: Add the default loading indicator when clicked
@@ -541,7 +549,7 @@ Tells ZSX to scroll to a particular element after completing a zx-swap. This can
 
 **Valid Values:**
 
-- **`true | false`**: When true, scroll to the first zx-swap selector element. When false, this disables zx-scroll-to and also default browser hash fragment scrolling.
+- **`true | false`**: When true, scroll to the first zx-swap selector element. When false, this disables zx-scroll-to and also a link URL hash target.
 - **`#idSelector`**: Scroll to the provided Id, regardless of the zx-swap selectors
 - `.classSelector` : Any valid CSS selector. The first item returned will be the target of the scroll
 - `"top"` : Scroll to the top of the page
@@ -603,7 +611,7 @@ Sometimes you want the scroll location to be just above the target element. You 
 
 ### Usage Guidelines
 
-Use zx-scroll-to sparingly when necessary to highlight an element that the user must perform in a workflow, or important information that they must see after an action.
+Use `zx-scroll-to` sparingly, only when necessary to highlight an element that the user must perform in a workflow, or important information that they must see after an action.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
@@ -681,25 +689,16 @@ Swap out the element from the form post content
 ```
 
 ### Usage Guidelines
-`zx-swap` is the primary feature of ZSX. As a result of every link or form action, you describe one or more elements that be replaced from the response content.
+`zx-swap` is the primary feature of ZSX. As a result of every link or form action, you describe one or more elements to swap from the response HTML.
 
-You should liberally use zx-swap throughout the application, but ensure to specify as narrow a target as possible. See [minimizing zx-swap targets](#minimzing-zx-swap-targets)
+You should liberally use zx-swap throughout the application. For best performance, specify as narrow a target as possible. See [minimizing zx-swap targets](#minimzing-zx-swap-targets)
 
 #### Swap Behavior
-`zx-swap` swaps the innerHTML of the target and merges the attributes. This will preserve event handlers and references on the old element, but any child event handlers will not be preserved.
+`zx-swap` swaps the innerHTML of the target and merges the attributes. This will preserve event handlers and references of the old element, but any child event handlers will not be preserved.
 
 ***Reattach event handlers using `zsx-zx-swap-after` event***
 
 Listen for the zx-swap event and reattach the event handlers manually for any children after the swap is complete. See [`zsx-zx-swap.after`](#zsxzx-swapafter)
-
-```html
-<a href="/" zx-swap="#innerContent">Click</a>
-<div id="containerWithEventHandlers">
-	<div id="innerContent">
-		content
-	</div>
-</div>
-```
 
 #### Form Redirects
 
@@ -741,9 +740,9 @@ Synchronizes parameters from an `<a>` link click with other links on the page.
 
 You use `zx-sync-params` when you need to sync all links using the parameter, even when only a small subset of the page content is updated.
 
-This is necessary when URL contains important state that should persist across subsequent clicks, but the content from the zx-swap does not touch all of the links on the page.
+This is necessary when the URL contains important state that should persist across subsequent clicks, regardless of swapped content.
 
-The logic performed is as follows:
+The `zx-sync-params` logic is:
 
 - **WHEN** a link with `zx-sync-params` is clicked
 - **FOR** each link on the page
@@ -776,7 +775,7 @@ For example, consider an element that needs to be visible or hidden. One link sh
 </div>
 ```
 
-Because both the show and hide links have a zx-sync-params, that means the inverse link is ignored when updated. Therefore only the 'Other Link' gets updated to whatever show/hide link was clicked last.
+Because both the show and hide links have a `zx-sync-params`, that means the inverse link is ignored when updated. Therefore only the 'Other Link' gets updated.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 
@@ -826,9 +825,9 @@ The following CSS classes are created by zsx.css for the visual features. You ca
 
 # ZSX Design Goals
 
-ZSX has an opinionated philosophy in regards to web application architecture, these opinions dictate it's featureset. Understanding these opinions will help you determine if ZSX is right for your development style.
+ZSX has an opinionated philosophy in regards to web application architecture. These opinions dictate it's featureset. The ZSX Design Goals will help you determine if ZSX is right for your development style.
 
-ZSX is designed to enhance server rendered applications. It improves the user experience of server rendered applications without breaking user’s expectations of browser behavior.
+ZSX is designed to enhance server rendered applications without breaking user’s expectations of browser behavior.
 
 We built [ChartSQL Studio](https://docs.chartsql.com) with ZSX and followed these guiding principles:
 
@@ -841,7 +840,8 @@ We built [ChartSQL Studio](https://docs.chartsql.com) with ZSX and followed thes
 - [Explicit Link and Form Handling](#explicit-link-and-form-handling)
 - [Must Be Able to Hard Refresh](#must-be-able-to-hard-refresh)
 
-Use Cases, Development Plans & Alternatives to ZSX
+Use Cases, Future Development plans & Alternatives to ZSX
+
  - [When to Use ZSX](#when-to-use-zsxjs)
  - [Future Development](#future-development)
  - [Alternatives](#alternatives)
@@ -855,7 +855,7 @@ Web applications should be addressible by URLs (links) and backend state changes
 
 Applications should be decomposed into pages (/entity1, /entity2) representing different resources, following a generally RESTful style.
 
-It follows that HTML, links and forms are the natural way to work with this architecture.
+It follows that HTML, links and forms are the natural way to work with the web application architecture.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
@@ -868,7 +868,7 @@ More advanced visual fidelity can be achieved with minor javascript, canvas and 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
 ## Web Components Are Not Necessary
-A lot of 'modern' front end development seeks to 'componetize' HTML. In fact 'web components' in the general sense is not a new technology. Some of the earliest web frameworks like JSP were very component-like. However, unless you are creating a "component library" for others to use, we do not believe web components are desirable.
+A lot of 'modern' front end development seeks to componetize HTML. In fact 'web components' in the general sense is not a new technology. Some of the earliest web frameworks like JSP were very component-like. However, unless you are creating a "component library" for others to use, we do not believe web components bring enough benefits.
 
 Building HTML UIs requires a lot of markup. Componetizing that markup does not lead to significant user improvement or developer ergonomics, in our opinion.
 
@@ -882,9 +882,9 @@ ZSX exists to enhance that experience while staying true to the nature of HTML a
 
 ZSX takes an minimalist approach to JavaScript. While some JS is necessary, we think JS heavy applications are not good UX.
 
-We believe the best UX is based on fundamental HTML/HTTP, links and forms, and that “JavaScript-first frontends” are overly complex applications that are hard to maintain.
+We believe the best UX is based on fundamental HTML/HTTP, links and forms, and that JavaScript-first frontends are overly complex and brittle to maintain.
 
-In a ZSX application, you should be able to look at the rendered HTML and understand exactly the interaction with the backend just by following the links and forms.
+In a ZSX application, you should be able to look at the rendered HTML and follow the links and forms to understand the application interactions.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
@@ -901,6 +901,8 @@ Full server renders might seem costly, but it greatly improves the maintainabili
 - Dissuades client side hydration which we consider an anti-pattern.
 - "Premature optimization is the root of all evil" - You don't need to spend time optimizing the performance of pages that are seldom used.
 - Caching of pages can be done server-side in a more robust manner
+
+The payload size of compressed HTML over the wire is not a significant factor in perceived latency compared to server response time and client side processing.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | *next section* → [Developing Applications](#developing-applications)
 
