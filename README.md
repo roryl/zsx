@@ -890,9 +890,9 @@ In a ZSX application, you should be able to look at the rendered HTML and follow
 
 ## Assume Full Page Rendering
 
-In a ZSX application, the server by default always fully renders full pages. ZSX provides features to hot swap elements on the page and avoid a full browser page reload.
+In a ZSX application, the server by default always fully renders pages. ZSX provides features to hot swap elements on the page and avoid a full browser page reload.
 
-Avoiding a full page reload improves performance of the browser. Browser performance is improved because it doesn't need to reflow the entire document. This performance improvement is perceived by the user as more responsive.
+Avoiding a full page reload improves performance of the browser. Browser performance is improved because it doesn't need to reflow the entire document and re-execute scripts. This performance improvement is perceived by the user as more responsive.
 
 Full server renders might seem costly, but it greatly improves the maintainability of applications:
 
@@ -990,7 +990,7 @@ Additional architectural tips and tricks for building maintainable and interacti
 
 ## Start With The Raw HTML
 
-When building your application, start with your HTML, Links and FORMs without any zx-* attributes. Get your basic workflows and content correct. When you are confident in the features, then enhance the UX by adding in `zx-swap`, `zx-loader`, `zx-dialog-confirm` and others to improve the slickness of your application.
+When building your application, start with your HTML, Links and FORMs without any zx-* attributes. Get your basic workflows and content correct. When you are confident in the features, then enhance the UX by adding in attributes like `zx-swap`, `zx-loader`, `zx-dialog-confirm` to improve the slickness of your application.
 
 
 ## Understanding Application State
@@ -1003,37 +1003,37 @@ One of the most challenging decisions in designing an application is deciding ju
 
 ### Database/Backend
 
-Use when the UI state must survive browser sessions or application restarts, you must store it in the database or persistent backend store. The application will load and render the database/backend state into the HTML.
+Use the Database/Backend when the UI state must survive browser sessions or application restarts. The application will load and render the database/backend state into the HTML.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
 ### Server Session
 
-Use when the UI state must not be shareable, does not need to be permenantly persisteted, but must survive page refreshes, you use Server Sessions. Mutating session state requires interacting with the server. Your server will maintain the session variables and render them into HTML. With session state, all open tabs for a single browser instance will share the same state.
+Use Server Sessions when the UI state must not be shareable, does not need to be permenantly persisteted, but must survive page refreshes. Mutating session state requires interacting with the server. Your server will maintain the session variables and render them into HTML. With session state, all open tabs for a single browser instance will share the same state.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
-### URL
+### URL Parameters
 
-Use when the UI state can be shareable, disclosable, and survive refreshes. The state is exposed to the user in the browser URL. URL state should be used whenever possible to match users expectations of browser functionality. URL state allows the page to be shareable, bookmarkable, deep linked, and opened in multiple tabs and multiple browsers independently.
+Use URL Parameters when the UI state can be shareable, disclosable, and survive refreshes. URL state should be used whenever possible to match users expectations of browser functionality. URL state allows the page to be shareable, bookmarkable, deep linked, and opened in multiple tabs and multiple browsers independently.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
 ### Cookies
 
-Use when the UI state must not be shareable across users or browsers, and can be set by the client without posting to the server, use cookies. Cookies allow bi-directional synchronization of state with the browser and server. The server can use the cookies to control rendering output, and the client can also set the cookies (whereas the browser cannot set session data without a request to the server)
+Use Cookies when the UI state must not be shareable across users or browsers, and can be set by the client without posting to the server. Cookies allow bi-directional synchronization of state with the browser and server. The server can use the cookies to control rendering output, and the client can also set the cookies (whereas the browser cannot set session data without a request to the server)
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
 ### localStorage
 
-Use when the UI state must not be shareable, and does not or must not be shared with the server for rendering. The client can set and restore values on page load into localStorage.
+Use localStorage when the UI state must not be shareable, and does not or must not be shared with the server for rendering. The client can set and restore values on page load into localStorage.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
 ### Javascript/Page State
 
-State which is stored in JavaScript runtime variables or set into HTML attributes we call “Page State”. Page State is never rendered by the server or shared with it. Page state should be kept to a minimum so that the convention of URL refreshing and link sharing is maintained. Typically page state will be used for minor UI elements like tooltips.
+Use Javascript/Page Stage when you need small client side features like tooktops. Page state is kept in runtime variables or HTML data-* attributes. Page State is never rendered by the server or shared with it. Page state should be kept to a minimum so that the convention of URL refreshing and link sharing is maintained.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
 
@@ -1074,18 +1074,18 @@ This means that you cannot wait to start animations after a request has finished
 
 ## UI Performance Optimization
 
-Most of the zsx processing is waiting on one of three operations: network requests, DOM swaps, and inline javascript. Decreasing the amount of time for these operations will have the biggest impact on application responsiveness.
+Most of the processing time is waiting on one of three operations: network requests, DOM swaps, and inline javascript. Decreasing the amount of time for these operations will have the biggest impact on application responsiveness.
 
 Follow these techniques in this order to improve the performance of your application:
 
-- [Optimize Network Requests](#optimizing-network-requests)
+- [Optimize Time to Response](#optimize-time-to-response)
 - [Minimize zx-swap Targets](#minimzing-zx-swap-targets)
 - [Decrease Inline Javascript](#decreasing-inline-javascript)
 - [Syncrhonizing Links](#synchronizing-links)
 - [Server Side Fragments](#server-side-fragments)
 
-### Optimizing Network Requests
-You should always seek to first optimize the backend server performance. Requests which complete &lt; 100ms are going to feel almost instantaneous to the user. Fast server responses improve both full page loads, and subsequent zx-swap loads.
+### Optimize Time to Response
+You should always seek to first optimize the backend server performance. Requests which respond in &lt; 100ms are going to feel almost instantaneous to the user. Fast server responses improve both full page loads, and subsequent zx-swap loads.
 
 Note: We find that the amount of raw HTML returned is not a significant factor, just response time. So a lot of HTML fully cached and quick from the server is a very viable optimization.
 
@@ -1094,18 +1094,18 @@ The time it takes to place new HTML into the DOM is many time larger than it tak
 
 Therefore you want to reduce the amount of HTML to be swapped, and the number of swaps that need to take place.
 
-Ideally, have each zx-swap only target the smallest parent that is necessary to update the content. Don't have more zx-swap targets that is necessary. Don't just zx-swap the body tag, instead think carefully about updating only specific page fragments.
+Ideally, have each `zx-swap` only target the smallest parent that is necessary to update the content. Don't have more `zx-swap` targets than is necessary. Don't just `zx-swap` the body tag, instead think carefully about updating only specific page fragments.
 
 ### Synchronizing Links
-Don't use zx-swap to replace link URLs on the page, as swapping is an expensive operation. You can use [`zx-sync-params`](#zx-sync-params) feature to update all links on the page to match the clicked URL.
+Don't use `zx-swap` to replace link URLs on the page, as swapping is an expensive operation. You can use [`zx-sync-params`](#zx-sync-params) feature to update all links on the page to match the clicked URL.
 
 ### Decreasing Inline Javascript
-zx-swap also executes any inline javascript and can be a source of unexpected delay. If the javascript is not necessary to run on every swap, move it outside of the target.
+`zx-swap` also executes any inline javascript and can be a source of unexpected delay. If the javascript is not necessary to run on every swap, move it outside of the target.
 
 ### Server Side Fragments
 COMING SOON:
 
-The final optimization is to only have the server return partial HTML based on the zx-swap target that was requested. Because this adds complexity to the backend to maintain two rendering paths, we use this sparingly. Relying too much on server side fragments means that the initial page loads will be slow, which is not good UX. Also the amount of HTML returned is not a critical factor compared to the server response time. So only use this method when you can significantly decrease the server response.
+The final optimization is to have the server return partial HTML based on the `zx-swap` target that was requested. Because this adds complexity to the backend to maintain two rendering paths, we use this sparingly. Relying too much on server side fragments means that the initial page loads will be slow, which is not good UX. Also the amount of HTML returned is not a critical factor compared to the server response time. So only use this method when you can significantly decrease the server response time.
 
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | [Events](#events) | [ZSX Design Goals](#zsx-design-goals) | [Developing Applications](#developing-applications) | *next section* → [Cookbook](#cookbook)
