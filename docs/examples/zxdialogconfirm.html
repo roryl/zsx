@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZSX.js zx-swap Example</title>
+    <!-- ZSX CSS -->
+    <link rel="stylesheet" href="../../src/zsx.css">
+
+	<style>
+		.zx-dialog-confirm {
+			width: 100%;
+			max-width: 500px;
+			border: none;
+			border-radius: 0.3rem;
+			background-color: #fff;
+			box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+			padding: 1rem;
+			z-index: 1050;
+		}
+
+		.zx-dialog-confirm::backdrop {
+			background: rgba(0, 0, 0, 0.5);
+		}
+
+		.zx-dialog-confirm-title {
+			margin-bottom: 1rem;
+			font-size: 1.5rem;
+			font-weight: bold;
+			line-height: 1.2;
+			border-bottom: 1px solid #dee2e6;
+			padding-bottom: 0.5rem;
+		}
+
+		.zx-dialog-confirm-text {
+			margin-bottom: 1.5rem;
+			font-size: 1rem;
+			color: #6c757d;
+		}
+
+		.zx-dialog-confirm-yes,
+		.zx-dialog-confirm-no {
+			display: inline-block;
+			margin: 0.5rem;
+			padding: 0.5rem 1rem;
+			font-size: 1rem;
+			font-weight: 400;
+			line-height: 1.5;
+			text-align: center;
+			text-decoration: none;
+			white-space: nowrap;
+			vertical-align: middle;
+			cursor: pointer;
+			border: 1px solid transparent;
+			border-radius: 0.25rem;
+			transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+		}
+
+		.zx-dialog-confirm-yes {
+			color: #fff;
+			background-color: #007bff; /* Primary color */
+			border-color: #007bff;
+		}
+
+		.zx-dialog-confirm-yes:hover {
+			background-color: #0056b3; /* Primary color darken */
+			border-color: #004085;
+		}
+
+		.zx-dialog-confirm-no {
+			color: #fff;
+			background-color: #6c757d; /* Secondary color */
+			border-color: #6c757d;
+		}
+
+		.zx-dialog-confirm-no:hover {
+			background-color: #5a6268; /* Secondary color darken */
+			border-color: #545b62;
+		}
+	</style>
+</head>
+<body>
+    <h1>ZSX.js zx-swap Example</h1>
+
+    <!-- Links with zx-swap attribute -->
+	<a href="./zxswap.html" zx-swap="#targetContent">Welcome</a><br/>
+    <a href="./zxswap.html?message=hello" zx-swap="#targetContent" zx-dialog-confirm="Are you sure?">Say Hello</a><br/>
+    <a href="./zxswap.html?message=goodbye" zx-swap="#targetContent">Say Goodbye</a><br/>
+
+	The page time is: <span id="pageTime"></span>
+
+    <!-- Target content to be swapped -->
+    <div id="targetContent" style="width: 300px; height: 100px; border: 1px solid #ccc; padding: 10px;">
+		<p id="messageText">Welcome! Click a link to change this content.</p>
+		<p>The fragment time is: <span id="currentTime"></span></p>
+
+		<!-- Script to simulate rendering. Typically you would be rendering
+		     on the server rather than rendering in javascript.
+		 -->
+		<script>renderContent();</script>
+    </div>
+
+	<script zx-script-skip="true">
+		document.getElementById('pageTime').innerHTML = new Date().toLocaleTimeString();
+		// Update page time
+		function renderContent(){
+			// Get URL parameters
+			var urlParams = new URLSearchParams(window.location.search);
+			var message = urlParams.get('message');
+			if (message === 'hello') {
+				document.getElementById('messageText').innerHTML = "Hello, World!";
+			}
+
+			if (message === 'goodbye') {
+				document.getElementById('messageText').innerHTML = "Goodbye, World!";
+			}
+			// Update current time
+			document.getElementById('currentTime').innerHTML = new Date().toLocaleTimeString();
+		}
+		renderContent();
+	</script>
+
+    <!-- ZSX.js Script -->
+    <script src="../../src/zsx.js"></script>
+    <script zx-script-skip="true">
+        // Initialize ZsxJs
+        const zsx = new ZsxJs();
+        zsx.init(document, {
+            // You can add custom options here
+        });
+    </script>
+</body>
+</html>

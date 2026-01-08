@@ -235,6 +235,10 @@ See [`zx-link-mode`](#zx-link-mode)
 
 <br>
 
+## Client Side Form Persistence
+
+Client side cache changes to form fields when the input is changed. This allows you to keep values between zw-swaps or full page reloads. When the form is submitted, the cache is cleared.
+
 # HTML API
 
 ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
@@ -699,6 +703,21 @@ You should liberally use zx-swap throughout the application. For best performanc
 ***Reattach event handlers using `zsx-zx-swap-after` event***
 
 Listen for the zx-swap event and reattach the event handlers manually for any children after the swap is complete. See [`zsx-zx-swap.after`](#zsxzx-swapafter)
+
+#### Form GET
+
+Forms with a method="get" are handled like browsers. The form parameters are serialized into the query string.
+
+```html
+<!-- Will be serialized into GET: /path?foo=bar&bazz=buzz -->
+<form action="/path" method="get" zx-swap="#targetContainer">
+	<input type="text" name="foo" value="bar">
+	<input type="text" name="bazz" value="buzz">
+	<button>submit</button>
+</form>
+```
+
+**note:** If the action contains query parameters, they are removed. According to browser specification, only the form parameters are passed.
 
 #### Form Redirects
 

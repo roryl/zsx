@@ -173,6 +173,8 @@ class ZsxJs {
 		} else if(requestElement instanceof HTMLFormElement){
 
 			out.type.isForm = true;
+			out.method = requestElement.method;
+			out.url = requestElement.action;
 
 			if(clickedButton !== null && clickedButton instanceof HTMLButtonElement){
 				out.method = clickedButton.getAttribute('formmethod') || requestElement.method;
@@ -829,11 +831,11 @@ class ZsxJs {
 				e.stopImmediatePropagation();
 
 				var dialogTemplate = `
-					<dialog>
-						<h2>${dialogTitle}</h2>
-						<p>${dialogText}</p>
-						<button class="zx-dialog-confirm-yes">${dialogOk}</button>
+					<dialog class="zx-dialog-confirm">
+						<h2 class="zx-dialog-confirm-title">${dialogTitle}</h2>
+						<p class="zx-dialog-confirm-text">${dialogText}</p>
 						<button class="zx-dialog-confirm-no">${dialogCancel}</button>
+						<button class="zx-dialog-confirm-yes">${dialogOk}</button>
 					</dialog>
 				`;
 
@@ -919,6 +921,12 @@ class ZsxJs {
 			if(zxTrigger.method == 'post'){
 				// @ts-ignore
 				requestData.body = formData;
+			} else {
+				// get the URL object
+				var url = new URL(zxTrigger.url);
+				url.search = new URLSearchParams(formData).toString();
+				zxTrigger.url = url.toString();
+				console.log('zxTrigger.url:' + zxTrigger.url);
 			}
 
 			/**

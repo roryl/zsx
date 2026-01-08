@@ -507,4 +507,22 @@ suite('ZsxJs', function() {
 		expect(testDocument.querySelector('#zeroViewportSpacer')).to.not.be.null;
 
 	});
+
+	test('_normalizeZxTrigger - form - should get the method and url from the form', function() {
+
+		var contentText = `
+			<form action="/home/echo" method="POST" zx-swap="#container">
+			</form>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+		var buttonElement = content.querySelector('#button');
+
+		var zxTrigger = ZsxJstest._normalizeZxTrigger(formElement);
+		expect(zxTrigger.method).to.equal('post');
+		expect(zxTrigger.url).to.equal('http://127.0.0.1:51404/home/echo');
+
+	});
+
 });
