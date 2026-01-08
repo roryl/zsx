@@ -131,7 +131,7 @@ ZSX adds improvements across three areas: *Page Fragment Updates*, *Enhanced Int
 **Navigation and State Management**: *Maintaining the user's state*
  - [Synchronize URL Parameters Across Links](#synchronize-url-parameters-across-links) — [`zx-sync-params`](#zx-sync-params)
  - [Automatic History Management](#automatic-history-management)
-
+ - [Client Side Form Persistence](#client-side-form-persistence) — [`zx-persist`](#zx-persist)
 
 
 ↑ [top](#zsxjs) | *next:* [Features](#features)
@@ -237,7 +237,11 @@ See [`zx-link-mode`](#zx-link-mode)
 
 ## Client Side Form Persistence
 
-Client side cache changes to form fields when the input is changed. This allows you to keep values between zw-swaps or full page reloads. When the form is submitted, the cache is cleared.
+Temporarily save and restore forms into local storage. This allows you to keep values between zw-swaps or full page reloads. When the form is submitted, the cache is cleared. Useful for simple slient side draft saving.
+
+See [`zx-persist`](#zx-persist)
+
+↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
 # HTML API
 
@@ -251,6 +255,7 @@ ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
 | [zx-keep](#zx-keep) | Keeps specified content in the DOM after a parent element is swapped  |
 | [zx-link-mode](#zx-link-mode) | Whether to render the link as a browser (default) link or an application clickable element |
 | [zx-loader](#zx-loader) | Specify that the link or button should have a loading indicator |
+| [zx-persist](#zx-persist) | Enables client side form persistence using local storage |
 | [zx-script-skip](#zx-script-skip) | Whether to ignore executing a script tag during a swap |
 | [zx-scroll-to](#zx-scroll-to) | Where to sroll to after the content swap |
 | [zx-swap](#zx-swap) | Swaps target selector content from the response of a link click or form post |
@@ -510,6 +515,37 @@ We provide different types of loading styles that serve different UX purposes.
 - **cursor-wait**: Used to imply that the application is processing and the user should not click again.
 - **cursor-progress**: Used to imply that the application is processing and the user CAN click again.
 
+
+↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
+
+## zx-persist
+
+**`true | false`**
+
+Enables or disables client-side form persistence using local storage. When enabled, form data is temporarily saved and restored between page reloads or content swaps.
+
+**Used on Tags:** `<form>`
+
+**Valid Values:**
+- `true`: Enables form persistence
+- `false`: Disables form persistence
+
+### Examples
+
+```html
+<form action="/submit" method="POST" zx-swap="#container" zx-persist="true">
+	<input type="text" name="username" placeholder="Username">
+	<input type="email" name="email" placeholder="Email">
+	<button type="submit">Submit</button>
+</form>
+```
+
+### Usage Guidelines
+
+Use `zx-persist` on forms where you want to enhance user experience by preserving form data across page reloads or content swaps. This is particularly useful for lengthy forms or when users may navigate away from the page before submitting.
+
+When the form is submitted, the cached data is cleared to prevent stale data from being restored on subsequent visits. Typically once a form is submitted,
+form values will be populated from the server response.
 
 ↑ [top](#zsxjs) | [Features](#features) | [HTML Api](#html-api) | *next section* → [Events](#events)
 

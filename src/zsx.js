@@ -52,15 +52,18 @@ class ZsxJs {
 			// Dialog must come first because it can interrupt the swap
 			this._setupDialog(dom);
 			this._setupSwap(dom);
+			this._setupPersistedForms(dom);
+			this._restorePersistedForms(dom);
 		} else {
 			dom.addEventListener('DOMContentLoaded', function(){
 				self._setupDialog(dom);
 				self._setupSwap(dom);
+				self._setupPersistedForms(dom);
+				self._restorePersistedForms(dom);
 			});
 		}
 
 		window.onpopstate = function(event) {
-
 
 			if(event.state) {
 				// event.state is equal to the data-attribute of the last pushState
@@ -97,6 +100,22 @@ class ZsxJs {
 	}
 
 	/**
+	 * Parses the document and restores any persisted forms
+	 * @param {DOMQueryable} dom
+	 */
+	_restorePersistedForms(dom){
+		//Get all forms with zx-persist attribute
+		var persistForms = dom.querySelectorAll('form[zx-persist]');
+		persistForms.forEach((form) => {
+			if(form instanceof HTMLFormElement){
+				this._restoreForm(form);
+			} else {
+				throw new Error('ZsxJs: target is not a form element. We should not be here');
+			}
+		});
+	}
+
+	/**
 	 * Parses the past document and sets up dialog elements. When the links or buttons are clicked
 	 * then the dialog will be displayed before the action is continued
 	 * @param {DOMQueryable} dom
@@ -115,6 +134,22 @@ class ZsxJs {
 			}
 		});
 
+	}
+
+	/**
+	 * Parses the document and sets up persisted forms
+	 * @param {DOMQueryable} dom
+	 */
+	_setupPersistedForms(dom){
+		//Get all forms with zx-persist attribute
+		var persistForms = dom.querySelectorAll('form[zx-persist]');
+		persistForms.forEach((form) => {
+			if(form instanceof HTMLFormElement){
+				this._decoratePersistForm(dom, form);
+			} else {
+				throw new Error('ZsxJs: target is not a form element. We should not be here');
+			}
+		});
 	}
 
 	/**
@@ -193,6 +228,25 @@ class ZsxJs {
 		// console.log('zx-swap:' + zxSwapAttribute);
 
 		return out;
+	}
+
+	/**
+	 * Clears the persisted form from local storage if it exists
+	 * @param {HTMLFormElement} htmlFormElement
+	 */
+	_clearPersistForm(htmlFormElement){
+
+		//Persist the form data to local storage
+		var formData = new FormData(htmlFormElement);
+		var formId = htmlFormElement.id;
+
+		if(formId === ''){
+			throw new Error('ZsxJs: Cannot persist form data because form has no id');
+		}
+
+		var persistKey = `zsx_persist_form_${formId}`
+		localStorage.removeItem(persistKey);
+
 	}
 
 	/**
@@ -585,6 +639,8 @@ class ZsxJs {
 			var childElement = finalNewElement.children[i];
 			this._setupDialog(childElement);
 			this._setupSwap(childElement);
+			this._setupPersistedForms(childElement);
+			this._restorePersistedForms(childElement);
 		}
 
 		// this._setupDialog(finalNewElement);
@@ -875,6 +931,39 @@ class ZsxJs {
 	}
 
 	/**
+	 * Sets up the handlers for persisting form data to local storage when
+	 * any of the inputs have changed and for clearing the persisted data on submit
+	 * @param {DOMQueryable} dom
+	 * @param {HTMLFormElement} htmlFormElement
+	 */
+	_decoratePersistForm(dom, htmlFormElement){
+
+		var formId = htmlFormElement.id;
+		if(formId === ''){
+			throw new Error('ZsxJs: Cannot persist form data because form has no id');
+		}
+
+		// All matching controls associated with this form (internal + external)
+		const allControls = dom.querySelectorAll(
+			`input[form="${formId}"], select[form="${formId}"], textarea[form="${formId}"],
+			#${formId} input, #${formId} select, #${formId} textarea`
+		);
+
+		//On any input change call _persistForm
+		allControls.forEach((control) => {
+			control.addEventListener('change', (e) => {
+				console.log('form is changed!');
+				this._persistForm(htmlFormElement);
+			});
+		});
+
+		//On form submit we need to clear the form
+		htmlFormElement.addEventListener('submit', (e) => {
+			this._clearPersistForm(htmlFormElement);
+		});
+	}
+
+	/**
 	 * Given a form element, we are going to intercept the submit event and perform an ajax request
 	 * @param {DOMQueryable} dom
 	 * @param {HTMLFormElement} form
@@ -924,7 +1013,12 @@ class ZsxJs {
 			} else {
 				// get the URL object
 				var url = new URL(zxTrigger.url);
-				url.search = new URLSearchParams(formData).toString();
+				url.search = new URLSearchParams(
+					// Fix type assertion because FormData could have file entries and basic formData
+					// will fail ts type check here. We know that in this case we only have basic form data
+					// and so we get the entries and convert to strings
+					/** @type {Record<string, string>} */ (Object.fromEntries(formData.entries()))
+				).toString();
 				zxTrigger.url = url.toString();
 				console.log('zxTrigger.url:' + zxTrigger.url);
 			}
@@ -1146,6 +1240,71 @@ class ZsxJs {
 
 		return syncParamsObject;
 	}
+
+	/**
+	 * Persists form data to local storage for later retrieval
+	 * @param {HTMLFormElement} htmlFormElement
+	 */
+	_persistForm(htmlFormElement){
+
+		//Persist the form data to local storage
+		var formData = new FormData(htmlFormElement);
+		var formId = htmlFormElement.id;
+
+		if(formId === ''){
+			throw new Error('ZsxJs: Cannot persist form data because form has no id');
+		}
+
+		/** @type {Record<string, string>} */
+		var formObject = {};
+
+		formData.forEach((value, key) => {
+		if (typeof value === 'string') {
+			formObject[key] = value;
+		}
+		// If value is a File/Blob, we silently skip it (not persistable in localStorage anyway)
+		});
+
+		// Safe to stringify now — only strings
+		localStorage.setItem(`zsx_persist_form_${formId}`, JSON.stringify(formObject));
+
+	}
+
+	/**
+	 * restores form the form from local storage if it exists
+	 * @param {HTMLFormElement} htmlFormElement
+	 */
+	_restoreForm(htmlFormElement){
+
+		var formId = htmlFormElement.id;
+
+		if(formId === ''){
+			throw new Error('ZsxJs: Cannot restore form data because form has no id');
+		}
+
+		var formDataString = localStorage.getItem(`zsx_persist_form_${formId}`);
+
+		if(formDataString === null){
+			//No persisted data
+			return;
+		}
+
+		var formDataObject = JSON.parse(formDataString);
+
+		for(var key in formDataObject){
+			var inputElement = htmlFormElement.querySelector(`[name="${key}"]`);
+			if(inputElement !== null){
+				if(inputElement instanceof HTMLInputElement ||
+				   inputElement instanceof HTMLTextAreaElement ||
+				   inputElement instanceof HTMLSelectElement){
+					inputElement.value = formDataObject[key];
+				}
+			}
+		}
+
+	}
+
+
 
 	/**
 	 * @param {any} text

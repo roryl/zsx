@@ -525,4 +525,199 @@ suite('ZsxJs', function() {
 
 	});
 
+	test('_persistForm - should store the form into the cache', function() {
+
+		var contentText = `
+			<form id="myForm" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue" value="5"/>
+			</form>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+		ZsxJstest._persistForm(formElement);
+
+		//Check local storage for the persisted form
+		var persistedForm = localStorage.getItem('zsx_persist_form_myForm');
+		expect(persistedForm).to.not.be.null;
+		persistedForm = JSON.parse(persistedForm);
+		expect(persistedForm.testValue).to.equal('5');
+
+	});
+
+	test('_restoreForm - should should restore the values from the cache into the form', function() {
+
+		var contentText = `
+			<form id="myForm" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue" value="5"/>
+			</form>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+
+		//Setup values into the cache
+		var persistData = {
+			testValue: '10'
+		};
+		localStorage.setItem('zsx_persist_form_myForm', JSON.stringify(persistData));
+
+		ZsxJstest._restoreForm(formElement);
+
+		//Check that the form value has been updated
+		expect(formElement.querySelector('input[name="testValue"]').value).to.equal('10');
+
+	});
+
+	test('_clearPersistForm - should clear this form out of the form cache', function() {
+
+		var contentText = `
+			<form id="myForm" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue" value="5"/>
+			</form>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+
+		//Setup values into the cache
+		var persistData = {
+			testValue: '10'
+		};
+		localStorage.setItem('zsx_persist_form_myForm', JSON.stringify(persistData));
+
+		ZsxJstest._clearPersistForm(formElement);
+
+		//Check local storage for the persisted form
+		var persistedForm = localStorage.getItem('zsx_persist_form_myForm');
+		expect(persistedForm).to.be.null;
+
+	});
+
+	test('_decoratePersistForm - should assign the event handlers', function() {
+
+		var contentText = `
+			<form id="myForm" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue" value="5"/>
+			</form>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+		var inputElement = formElement.querySelector('input[name="testValue"]');
+
+		ZsxJstest._decoratePersistForm(content, formElement);
+
+		inputElement.value = '42';
+  		inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+
+		//Check local storage for the persisted form
+		var persistedForm = localStorage.getItem('zsx_persist_form_myForm');
+		expect(persistedForm).to.not.be.null;
+		persistedForm = JSON.parse(persistedForm);
+		expect(persistedForm.testValue).to.equal('42');
+
+	});
+
+	test('_setupPersistedForms - should find and setup all persisted forms in the document', function() {
+
+		var contentText = `
+			<form id="myForm1" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue1" value="5"/>
+			</form>
+			<form id="myForm2" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue2" value="10"/>
+			</form>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+
+		ZsxJstest._setupPersistedForms(content);
+
+		//Modify first form
+		var formElement1 = content.querySelector('#myForm1');
+		var inputElement1 = formElement1.querySelector('input[name="testValue1"]');
+		inputElement1.value = '42';
+  		inputElement1.dispatchEvent(new Event('change', { bubbles: true }));
+
+		//Modify second form
+		var formElement2 = content.querySelector('#myForm2');
+		var inputElement2 = formElement2.querySelector('input[name="testValue2"]');
+		inputElement2.value = '84';
+  		inputElement2.dispatchEvent(new Event('change', { bubbles: true }));
+
+		//Check local storage for the persisted forms
+		var persistedForm1 = localStorage.getItem('zsx_persist_form_myForm1');
+		expect(persistedForm1).to.not.be.null;
+		persistedForm1 = JSON.parse(persistedForm1);
+		expect(persistedForm1.testValue1).to.equal('42');
+
+		var persistedForm2 = localStorage.getItem('zsx_persist_form_myForm2');
+		expect(persistedForm2).to.not.be.null;
+		persistedForm2 = JSON.parse(persistedForm2);
+		expect(persistedForm2.testValue2).to.equal('84');
+
+	})
+
+	test('_restorePersistedForms - should find and restore all persisted forms in the document', function() {
+		var contentText = `
+			<form id="myForm1" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue1" value="5"/>
+			</form>
+			<form id="myForm2" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue2" value="10"/>
+			</form>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+
+		//Setup values into the cache
+		var persistData1 = {
+			testValue1: '42'
+		};
+		localStorage.setItem('zsx_persist_form_myForm1', JSON.stringify(persistData1));
+
+		var persistData2 = {
+			testValue2: '84'
+		};
+		localStorage.setItem('zsx_persist_form_myForm2', JSON.stringify(persistData2));
+
+		ZsxJstest._restorePersistedForms(content);
+
+		//Check that the form values have been updated
+		var formElement1 = content.querySelector('#myForm1');
+		expect(formElement1.querySelector('input[name="testValue1"]').value).to.equal('42');
+
+		var formElement2 = content.querySelector('#myForm2');
+		expect(formElement2.querySelector('input[name="testValue2"]').value).to.equal('84');
+	});
+
+	test('persisted form on submit event clears the persisted local storage', function() {
+
+		var contentText = `
+			<form id="myForm" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue" value="5"/>
+			</form>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+
+		//Setup values into the cache
+		var persistData = {
+			testValue: '10'
+		};
+		localStorage.setItem('zsx_persist_form_myForm', JSON.stringify(persistData));
+
+		//Decorate the form for persistence
+		ZsxJstest._decoratePersistForm(content, formElement);
+
+		//Simulate a form submit event
+  		formElement.dispatchEvent(new Event('submit', { bubbles: true }));
+
+		//Check local storage for the persisted form
+		var persistedForm = localStorage.getItem('zsx_persist_form_myForm');
+		expect(persistedForm).to.be.null;
+
+	});
 });
