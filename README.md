@@ -132,6 +132,7 @@ ZSX adds improvements across three areas: *Page Fragment Updates*, *Enhanced Int
  - [Synchronize URL Parameters Across Links](#synchronize-url-parameters-across-links) — [`zx-sync-params`](#zx-sync-params)
  - [Automatic History Management](#automatic-history-management)
  - [Client Side Form Persistence](#client-side-form-persistence) — [`zx-persist`](#zx-persist)
+ - [Client Side Cookies](#client-side-cookies) — [`zx-cookie-set`](#zx-cookie-set)
 
 
 ↑ [top](#zsxjs) | *next:* [Features](#features)
@@ -243,6 +244,14 @@ See [`zx-persist`](#zx-persist)
 
 ↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
 
+## Client Side Cookies
+
+Easily set client side cookies from links to persist state between requests. This is useful for preferences or other minor client side state that the server can read on subsequent requests.
+
+See [`zx-cookie-set`](#zx-cookie-set)
+
+↑ [top](#zsxjs) | [Features](#features) | *next section* → [HTML API](#html-api)
+
 # HTML API
 
 ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
@@ -250,6 +259,7 @@ ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
 
 | attribute | Description |
 | --- | --- |
+| [zx-cookie-set](#zx-cookie-set) | Set client side cookies from a link click |
 | [zx-dialog-confirm](#zx-dialog-confirm) | Confirmation question before proceeding with the click |
 | [zx-jump-guard](#zx-jump-guard) | Guards against page jumps from removed content
 | [zx-keep](#zx-keep) | Keeps specified content in the DOM after a parent element is swapped  |
@@ -260,6 +270,39 @@ ZSX works by adding attributes like `zx-swap` to your existing HTML markup.
 | [zx-scroll-to](#zx-scroll-to) | Where to sroll to after the content swap |
 | [zx-swap](#zx-swap) | Swaps target selector content from the response of a link click or form post |
 | [zx-sync-params](#zx-sync-params) | Syncronizes URL parameters across links after a click |
+
+## zx-cookie-set
+**`json`**
+
+Sets cookies when a link is clicked.
+
+**Used on Tags:** `<a>`
+
+**Valid Values:** A JSON object with key/value pairs representing cookie names and values.
+
+### Examples
+
+```html
+<a href="/path" zx-swap="#target" zx-cookie-set='{"theme":"dark"}'>Set Cookies</a>
+```
+
+#### Clearing a Cookie
+
+To clear a cookie, set its value to an empty string or null
+
+```html
+<a href="/path" zx-swap="#target" zx-cookie-set='{"theme":""}'>Clear Cookie</a>
+```
+
+```html
+<a href="/path" zx-swap="#target" zx-cookie-set='{"theme":null}'>Clear Cookie</a>
+```
+
+### Usage Guidelines
+
+Use `zx-cookie-set` to set client side cookies for preferences or other minor client side state that the server can read on subsequent requests. For example whether a panel is open or closed. Don't typically use this for large data, or sensitive data.
+
+Cookies set with `zx-cookie-set` are Lax and never expire.
 
 ## zx-dialog-confirm
 **`string`**

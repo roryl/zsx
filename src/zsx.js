@@ -51,12 +51,14 @@ class ZsxJs {
 		if (dom.readyState !== 'loading') {
 			// Dialog must come first because it can interrupt the swap
 			this._setupDialog(dom);
+			this._setupCookieSetLinks(dom, dom);
 			this._setupSwap(dom);
 			this._setupPersistedForms(dom);
 			this._restorePersistedForms(dom);
 		} else {
 			dom.addEventListener('DOMContentLoaded', function(){
 				self._setupDialog(dom);
+				self._setupCookieSetLinks(dom, dom);
 				self._setupSwap(dom);
 				self._setupPersistedForms(dom);
 				self._restorePersistedForms(dom);
@@ -108,7 +110,7 @@ class ZsxJs {
 		var persistForms = dom.querySelectorAll('form[zx-persist]');
 		persistForms.forEach((form) => {
 			if(form instanceof HTMLFormElement){
-				this._restoreForm(form);
+				this._restoreForm(dom, form);
 			} else {
 				throw new Error('ZsxJs: target is not a form element. We should not be here');
 			}
@@ -148,6 +150,23 @@ class ZsxJs {
 				this._decoratePersistForm(dom, form);
 			} else {
 				throw new Error('ZsxJs: target is not a form element. We should not be here');
+			}
+		});
+	}
+
+	/**
+	 * Parses the document and sets up persisted forms
+	 * @param {Document} doc
+	 * @param {DOMQueryable} dom
+	 */
+	_setupCookieSetLinks(doc, dom){
+		//Get all forms with zx-persist attribute
+		var persistForms = dom.querySelectorAll('a[zx-cookie-set]');
+		persistForms.forEach((link) => {
+			if(link instanceof HTMLAnchorElement){
+				this._decorateCookieSet(doc, link);
+			} else {
+				throw new Error('ZsxJs: target is not a link element. We should not be here');
 			}
 		});
 	}
@@ -542,7 +561,7 @@ class ZsxJs {
 	/**
 	 * Swaps the oldElement with the newElement and uses the selector to find the
 	 * new element added
-	 * @param {DOMQueryable} dom
+	 * @param {Document} dom
 	 * @param {Element} oldElement
 	 * @param {Element} newElement
 	 * @param {string} selector
@@ -638,6 +657,7 @@ class ZsxJs {
 		for(var i = 0; i < finalNewElement.children.length; i++){
 			var childElement = finalNewElement.children[i];
 			this._setupDialog(childElement);
+			this._setupCookieSetLinks(dom, childElement);
 			this._setupSwap(childElement);
 			this._setupPersistedForms(childElement);
 			this._restorePersistedForms(childElement);
@@ -928,6 +948,26 @@ class ZsxJs {
 
 		});
 
+	}
+
+	/**
+	 * Sets up the handlers for setting cookies when links are clicked
+	 * @param {Document} doc
+	 * @param {HTMLAnchorElement} htmlAnchorElement
+	 */
+	_decorateCookieSet(doc, htmlAnchorElement){
+		htmlAnchorElement.addEventListener('click', (e) => {
+			var cookieSetAttribute = htmlAnchorElement.getAttribute('zx-cookie-set');
+			if(cookieSetAttribute !== null){
+				//Decode the cookieSetAttribute which is in json
+				// console.log(cookieSetAttribute);
+				var cookieData = JSON.parse(cookieSetAttribute);
+				for(var cookieName in cookieData){
+					var cookieValue = cookieData[cookieName];
+					this._setCookieValue(doc, cookieName, cookieValue);
+				}
+			}
+		});
 	}
 
 	/**
@@ -1272,9 +1312,10 @@ class ZsxJs {
 
 	/**
 	 * restores form the form from local storage if it exists
+	 * @param {DOMQueryable} dom
 	 * @param {HTMLFormElement} htmlFormElement
 	 */
-	_restoreForm(htmlFormElement){
+	_restoreForm(dom, htmlFormElement){
 
 		var formId = htmlFormElement.id;
 
@@ -1291,20 +1332,75 @@ class ZsxJs {
 
 		var formDataObject = JSON.parse(formDataString);
 
+		// All matching controls associated with this form (internal + external)
+		const allControls = dom.querySelectorAll(
+			`input[form="${formId}"], select[form="${formId}"], textarea[form="${formId}"],
+			#${formId} input, #${formId} select, #${formId} textarea`
+		);
+
 		for(var key in formDataObject){
-			var inputElement = htmlFormElement.querySelector(`[name="${key}"]`);
-			if(inputElement !== null){
-				if(inputElement instanceof HTMLInputElement ||
-				   inputElement instanceof HTMLTextAreaElement ||
-				   inputElement instanceof HTMLSelectElement){
-					inputElement.value = formDataObject[key];
+			allControls.forEach((control) => {
+
+				if(control instanceof HTMLInputElement || control instanceof HTMLSelectElement || control instanceof HTMLTextAreaElement){
+					if(control.name === key){
+						control.value = formDataObject[key];
+
+						//call change event on the control
+						var event = new Event('change');
+						control.dispatchEvent(event);
+					}
 				}
-			}
+			});
 		}
 
 	}
 
+	/**
+	 * Sets a cookie value with an optional prefix. Used to pass data between pages and/or the server
+	 * @param {Document} doc
+	 * @param {string} name
+	 * @param {string} value
+	 * @param {string|null} [prefix] - Optional prefix
+	 */
+	_setCookieValue(doc, name, value, prefix) {
 
+		//If value is null or empty then we are going to delete the cookie
+		if(value === null || value === ''){
+			//If the prefix is "" or null, we are going to delete the cookie without the prefix
+			if(prefix === null || prefix === '' || prefix === undefined){
+				doc.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
+			} else {
+				doc.cookie = `${prefix}${name}=; Max-Age=0; path=/; SameSite=Lax`;
+			}
+			return;
+		}
+
+		//If the prefix is "" or null, we are going to set the cookie without the prefix. Cookies don't expire
+		if(prefix === null || prefix === '' || prefix === undefined){
+			doc.cookie = `${name}=${value}; path=/; SameSite=Lax; Max-Age=31536000`;
+		} else {
+			doc.cookie = `${prefix}${name}=${value}; path=/; SameSite=Lax; Max-Age=31536000`;
+		}
+
+	}
+
+	/**
+	 * Get's cookie value with an optional prefix. Used to pass data between pages and/or the server
+	 * @param {Document} dom
+	 * @param {string} name
+	 * @param {string} prefix
+	 */
+	_getCookieValue(dom, name, prefix) {
+		//If the prefix is "" or null, we are going to get the cookie without the prefix
+		var nameEQ = (prefix === null || prefix === '' || prefix === undefined) ? `${name}=` : `${prefix}${name}=`;
+		var ca = dom.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	}
 
 	/**
 	 * @param {any} text

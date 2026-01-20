@@ -545,6 +545,28 @@ suite('ZsxJs', function() {
 
 	});
 
+	test('_persistForm - should handle inputs outside the form', function() {
+
+		var contentText = `
+			<form id="myForm" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue1" value="5"/>
+			</form>
+			<input type="text" name="testValue2" value="10" form="myForm"/>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+		ZsxJstest._persistForm(formElement);
+
+		//Check local storage for the persisted form
+		var persistedForm = localStorage.getItem('zsx_persist_form_myForm');
+		expect(persistedForm).to.not.be.null;
+		persistedForm = JSON.parse(persistedForm);
+		expect(persistedForm.testValue1).to.equal('5');
+		expect(persistedForm.testValue2).to.equal('10');
+
+	});
+
 	test('_restoreForm - should should restore the values from the cache into the form', function() {
 
 		var contentText = `
@@ -562,10 +584,46 @@ suite('ZsxJs', function() {
 		};
 		localStorage.setItem('zsx_persist_form_myForm', JSON.stringify(persistData));
 
-		ZsxJstest._restoreForm(formElement);
+		ZsxJstest._restoreForm(content, formElement);
 
 		//Check that the form value has been updated
 		expect(formElement.querySelector('input[name="testValue"]').value).to.equal('10');
+
+	});
+
+	test('_restoreForm - should handle inputs outside the form', function() {
+
+		var contentText = `
+			<form id="myForm" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue1" value="5"/>
+			</form>
+			<input type="text" name="testValue2" value="10" form="myForm"/>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+
+		//Add a change event handler on the input to test if it is called
+		var inputElement2 = content.querySelector('input[name="testValue2"]');
+		var changeEventCalled = false;
+		inputElement2.addEventListener('change', function() {
+			changeEventCalled = true;
+		});
+
+		//Setup values into the cache
+		var persistData = {
+			testValue1: '100',
+			testValue2: '200'
+		};
+
+		localStorage.setItem('zsx_persist_form_myForm', JSON.stringify(persistData));
+		ZsxJstest._restoreForm(content, formElement);
+		//Check that the form value has been updated
+		expect(formElement.querySelector('input[name="testValue1"]').value).to.equal('100');
+		expect(content.querySelector('input[name="testValue2"]').value).to.equal('200');
+
+		//Check that the change event was called
+		expect(changeEventCalled).to.be.true;
 
 	});
 
@@ -616,6 +674,67 @@ suite('ZsxJs', function() {
 		expect(persistedForm).to.not.be.null;
 		persistedForm = JSON.parse(persistedForm);
 		expect(persistedForm.testValue).to.equal('42');
+
+	});
+
+	test('_decorateCookieSet - should assign the event handlers', function() {
+
+		var contentText = `<a href="" zx-cookie-set='{"testCookie":"foo"}'>Set Cookie</a>`
+
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+
+		let storedCookie = '';
+		const fakeDoc = {
+			get cookie() { return storedCookie; },
+			set cookie(value) { storedCookie = value; }
+		};
+
+		var linkElement = content.querySelector('a');
+		ZsxJstest._decorateCookieSet(fakeDoc, linkElement);
+		//Simulate a click event
+  		linkElement.dispatchEvent(new Event('click', { bubbles: true }));
+		//Check that the cookie is set
+
+		var cookieValue = fakeDoc.cookie.split('; ').find(row => row.startsWith('testCookie=')).split('=')[1];
+		expect(cookieValue).to.equal('foo');
+
+	});
+
+	test('_setupCookieSetLinks - should find and setup all persisted links in the document', function() {
+
+		var contentText = `
+			<a id="link1" href="" zx-cookie-set='{"testCookie1":"value1"}'>Set Cookie 1</a>
+			<a id="link2" href="" zx-cookie-set='{"testCookie2":"value2"}'>Set Cookie 2</a>
+		`
+
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		let storedCookie = '';
+		const fakeDoc = {
+			get cookie() { return storedCookie; },
+			set cookie(value) { storedCookie = value; }
+		};
+
+		//Mock querySelectorAll on fakeDoc
+		fakeDoc.querySelectorAll = function(selector) {
+			return content.querySelectorAll(selector);
+		};
+
+		ZsxJstest._setupCookieSetLinks(fakeDoc, content);
+
+		//Simulate click on first link
+		var linkElement1 = content.querySelector('#link1');
+		linkElement1.dispatchEvent(new Event('click', { bubbles: true }));
+
+		var cookieValue1 = fakeDoc.cookie.split('; ').find(row => row.startsWith('testCookie1=')).split('=')[1];
+		expect(cookieValue1).to.equal('value1');
+
+		//Simulate click on second link
+		var linkElement2 = content.querySelector('#link2');
+		linkElement2.dispatchEvent(new Event('click', { bubbles: true }));
+		var cookieValue2 = fakeDoc.cookie.split('; ').find(row => row.startsWith('testCookie2=')).split('=')[1];
+		expect(cookieValue2).to.equal('value2');
 
 	});
 
@@ -718,6 +837,163 @@ suite('ZsxJs', function() {
 		//Check local storage for the persisted form
 		var persistedForm = localStorage.getItem('zsx_persist_form_myForm');
 		expect(persistedForm).to.be.null;
+
+	});
+
+	test('persisted form with inputs outside of the form', function() {
+		var contentText = `
+			<form id="myForm" action="/home/echo" method="POST" zx-persist="true">
+				<input type="text" name="testValue1" value="5"/>
+			</form>
+			<input type="text" name="testValue2" value="10" form="myForm"/>
+		`
+		var parser = new DOMParser();
+		var content = parser.parseFromString(contentText, 'text/html').body;
+		var formElement = content.querySelector('form');
+		var inputElement2 = content.querySelector('input[name="testValue2"]');
+
+		ZsxJstest._decoratePersistForm(content, formElement);
+
+		//Modify second input
+		inputElement2.value = '42';
+  		inputElement2.dispatchEvent(new Event('change', { bubbles: true }));
+
+		//Check local storage for the persisted form
+		var persistedForm = localStorage.getItem('zsx_persist_form_myForm');
+		expect(persistedForm).to.not.be.null;
+		persistedForm = JSON.parse(persistedForm);
+		expect(persistedForm.testValue2).to.equal('42');
+
+		//Now test restoring the form
+		//Setup values into the cache
+		var persistData = {
+			testValue1: '100',
+			testValue2: '200'
+		};
+
+		localStorage.setItem('zsx_persist_form_myForm', JSON.stringify(persistData));
+		ZsxJstest._restoreForm(content, formElement);
+		//Check that the form value has been updated
+		expect(formElement.querySelector('input[name="testValue1"]').value).to.equal('100');
+		expect(content.querySelector('input[name="testValue2"]').value).to.equal('200');
+
+	});
+
+	test('_setCookieValue', function() {
+
+		let storedCookie = '';
+
+		const fakeDoc = {
+			get cookie() { return storedCookie; },
+			set cookie(value) { storedCookie = value; }
+		};
+
+		//Set a cookie using _setCookieValue
+		ZsxJstest._setCookieValue(fakeDoc, 'zsx_test_cookie', 'test_value');
+
+		//Check that the cookie is set
+
+		var cookieValue = fakeDoc.cookie.split('; ').find(row => row.startsWith('zsx_test_cookie=')).split('=')[1];
+		expect(cookieValue).to.equal('test_value');
+
+	});
+
+	test('_setCookieValue_nullValueDeletesTheCookie', function() {
+
+		let storedCookie = '';
+
+		const fakeDoc = {
+			get cookie() { return storedCookie; },
+			set cookie(value) { storedCookie = value; }
+		};
+
+		//First set the cookie to a value
+		ZsxJstest._setCookieValue(fakeDoc, 'zsx_test_cookie', 'test_value');
+
+		//Set a cookie using _setCookieValue
+		ZsxJstest._setCookieValue(fakeDoc, 'zsx_test_cookie', null);
+
+		//Check that the cookie is set
+
+		console.log(fakeDoc.cookie);
+
+		var cookieValue = fakeDoc.cookie.split('; ').find(row => row.startsWith('zsx_test_cookie=')).split('=')[1];
+		var cookieAge = fakeDoc.cookie.split('; ').find(row => row.startsWith('Max-Age='));
+
+		//Check that the maxAge is set to 0
+		expect(cookieValue).to.equal('');
+		expect(cookieAge).to.equal('Max-Age=0');
+
+	});
+
+	test('_setCookieValue_emptyValueDeletesTheCookie', function() {
+
+		let storedCookie = '';
+
+		const fakeDoc = {
+			get cookie() { return storedCookie; },
+			set cookie(value) { storedCookie = value; }
+		};
+
+		//First set the cookie to a value
+		ZsxJstest._setCookieValue(fakeDoc, 'zsx_test_cookie', 'test_value');
+
+		//Set a cookie using _setCookieValue
+		ZsxJstest._setCookieValue(fakeDoc, 'zsx_test_cookie', '');
+
+		//Check that the cookie is set
+
+		console.log(fakeDoc.cookie);
+
+		var cookieValue = fakeDoc.cookie.split('; ').find(row => row.startsWith('zsx_test_cookie=')).split('=')[1];
+		var cookieAge = fakeDoc.cookie.split('; ').find(row => row.startsWith('Max-Age='));
+
+		//Check that the maxAge is set to 0
+		expect(cookieValue).to.equal('');
+		expect(cookieAge).to.equal('Max-Age=0');
+
+	});
+
+	test('_setCookieValue_withPrefix', function() {
+		//Set a cookie using _setCookieValue
+		let storedCookie = '';
+		const fakeDoc = {
+			get cookie() { return storedCookie; },
+			set cookie(value) { storedCookie = value; }
+		};
+
+		ZsxJstest._setCookieValue(fakeDoc, 'zsx_test_cookie', 'test_value', 'prefix.');
+		//Check that the cookie is set
+		var cookieValue = fakeDoc.cookie.split('; ').find(row => row.startsWith('prefix.zsx_test_cookie=')).split('=')[1];
+	});
+
+	test('_getCookieValue', function() {
+
+		let storedCookie = 'zsx_test_cookie=test_value; other_cookie=other_value';
+
+		const fakeDoc = {
+			get cookie() { return storedCookie; },
+			set cookie(value) { storedCookie = value; }
+		};
+
+		//Get a cookie using _getCookieValue
+		var cookieValue = ZsxJstest._getCookieValue(fakeDoc, 'zsx_test_cookie');
+		expect(cookieValue).to.equal('test_value');
+
+	});
+
+	test('_getCookieValue_withPrefix', function() {
+
+		let storedCookie = 'prefix.zsx_test_cookie=test_value; other_cookie=other_value';
+
+		const fakeDoc = {
+			get cookie() { return storedCookie; },
+			set cookie(value) { storedCookie = value; }
+		};
+
+		//Get a cookie using _getCookieValue
+		var cookieValue = ZsxJstest._getCookieValue(fakeDoc, 'zsx_test_cookie', 'prefix.');
+		expect(cookieValue).to.equal('test_value');
 
 	});
 });
